@@ -754,78 +754,7 @@ contract PatientIdentity {
             });
         } else if (user0 == uint256(EntityType.MedicalResearchLab)) {
             MedicalResearchLab storage lab = medicalResearchLabs[userAddress];
-
-            userData = commonData({
-                userType: lab.userType,
-                userAddress: lab.labAddress,
-                userID: lab.labID,
-                username: lab.name,
-                emailAddress: lab.emailAddress
-            });
-        } else if (user0 == uint256(EntityType.PharmacyCompany)) {
-            PharmacyCompany storage company = pharmacyCompanies[userAddress];
-            userData = commonData({
-                userType: company.userType,
-                userAddress: company.pharmacyCompanyAddress,
-                userID: company.companyID,
-                username: company.name,
-                emailAddress: company.emailAddress
-            });
-        }
-        return userData;
-    }
-
-    function getPathologist(address _pathologistAddress)
-        public
-        view
-        returns (
-            address pathologistAddress,
-            uint256 pathologistID,
-            bytes32 name,
-            uint256 licenseNumber,
-            bytes32 specializationArea,
-            uint256 totalExperience,
-            address[] memory patientToPathologist,
-            string[] memory pathologistTest,
-            bytes32 userType,
-            string memory profilePic,
-            bytes32 birthday,
-            address[] memory allDoctor
-        )
-    {
-        Pathologist storage pathologist = pathologists[_pathologistAddress];
-        require(pathologist.isAdded, "Pathologist not found");
-
-        return (
-            pathologist.pathologistAddress,
-            pathologist.pathologistID,
-            pathologist.name,
-            pathologist.licenseNumber,
-            pathologist.specializationArea,
-            pathologist.totalExperience,
-            pathologist.PatientToPathologiest.values(),
-            pathologist.pathologistTest,
-            pathologist.userType,
-            pathologist.profilePic,
-            pathologist.birthday,
-            pathologist.doctor.values()
-        );
-    }
-
-    function getPharmacyCompany(address _pharmacyCompanyAddress)
-        public
-        view
-        returns (PharmacyCompany memory)
-    {
-        assert(pharmacyCompanies[_pharmacyCompanyAddress].isAdded);
-
-        return pharmacyCompanies[_pharmacyCompanyAddress];
-    }
-
-    function getMedicalResearchLab(address _labAddress)
-        public
-        view
-        returns (MedicalResearchLab memory)
+memory)
     {
         assert(medicalResearchLabs[_labAddress].isAdded);
 
@@ -900,66 +829,7 @@ contract PatientIdentity {
                             .PatientToDoctor
                             .remove(msg.sender);
                     }
-                }
-            }
-        }
-    }
-
-    function revokeAccessData(address userAddress) external {
-        if (accounts[msg.sender] == uint256(EntityType.Patient)) {
-            sharedAllDoctorAddress[msg.sender].remove(userAddress);
-            if (accounts[userAddress] == uint256(EntityType.Doctor)) {
-                doctors[userAddress].PatientToDoctor.remove(msg.sender);
-            } 
-        }else if (accounts[msg.sender] == uint256(EntityType.Admin)) {
-             if (
-                accounts[userAddress] == uint256(EntityType.MedicalResearchLab)
-            ) {
-                adminToMedRcLab[userAddress].remove(msg.sender);
-            } else if (
-                accounts[userAddress] == uint256(EntityType.PharmacyCompany)
-            ) {
-                adminToPharmacy[userAddress].remove(msg.sender);
-            }
-        }
-    }
-
-    // function allUserData() public view returns (commonData[] memory) {
-    //     commonData[] memory userDataArray = new commonData[](
-    //         allUserTypeAddress.length()
-    //     );
-
-    //     for (uint256 i = 0; i < allUserTypeAddress.length(); i++) {
-    //         address userAddress = allUserTypeAddress.at(i);
-    //         uint256 userType = accounts[userAddress];
-
-    //         if (userType == uint256(EntityType.Doctor)) {
-    //             Doctor storage doctor = doctors[userAddress];
-    //             userDataArray[i] = commonData({
-    //                 userType: doctor.userType,
-    //                 userAddress: doctor.DoctorAddress,
-    //                 userID: doctor.doctorID,
-    //                 username: doctor.name,
-    //                 emailAddress: doctor.emailAddress
-    //             });
-    //         } else if (userType == uint256(EntityType.MedicalResearchLab)) {
-    //             MedicalResearchLab storage lab = medicalResearchLabs[
-    //                 userAddress
-    //             ];
-    //             userDataArray[i] = commonData({
-    //                 userType: lab.userType,
-    //                 userAddress: lab.labAddress,
-    //                 userID: lab.labID,
-    //                 username: lab.name,
-    //                 emailAddress: lab.emailAddress
-    //             });
-    //         } else if (userType == uint256(EntityType.PharmacyCompany)) {
-    //             PharmacyCompany storage company = pharmacyCompanies[
-    //                 userAddress
-    //             ];
-    //             userDataArray[i] = commonData({
-    //                 userType: company.userType,
-    //                 userAddress: company.pharmacyCompanyAddress,
+: company.pharmacyCompanyAddress,
     //                 userID: company.companyID,
     //                 username: company.name,
     //                 emailAddress: company.emailAddress
