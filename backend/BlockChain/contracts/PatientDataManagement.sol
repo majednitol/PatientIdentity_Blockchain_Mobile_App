@@ -1,4 +1,4 @@
-ডি// SPDX-License-Identifier: MIT
+ঘিডি// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
@@ -47,42 +47,7 @@ contract PatientIdentity {
         bytes32 location;
         bool isAdded;
         bytes32 userType;
-        string[] imgUrl;
-        PatientPersonalData patientPersonalData;
-        string profilePic;
-        bytes32 birthday;
-        bytes32 emailAddress;
-    }
-    
-    mapping(address => EnumerableSet.AddressSet) private PatientToAdmin;
-    mapping(address => EnumerableSet.AddressSet) private personalDoctor;
-
-    function getPatientToAdmin(address userAddress)
-        public
-        view
-        returns (address[] memory)
-    {
-        return PatientToAdmin[userAddress].values();
-    }
-
-    function getPersonalDoctor() public view returns (address[] memory) {
-        return personalDoctor[msg.sender].values();
-    }
-
-    // EnumerableSet.AddressSet sharedAllDoctorAndAdminAddress;
-    mapping(address => EnumerableSet.AddressSet)
-        private sharedAllDoctorAddress;
-
-    function getsharedAllDoctorAddress()
-        public
-        view
-        returns (address[] memory)
-    {
-        return sharedAllDoctorAddress[msg.sender].values();
-    }
-
-    EnumerableSet.AddressSet sharedAllUsersAddress;
-
+        
     function getsharedAllUsersAddress() public view returns (address[] memory) {
         return sharedAllUsersAddress.values();
     }
