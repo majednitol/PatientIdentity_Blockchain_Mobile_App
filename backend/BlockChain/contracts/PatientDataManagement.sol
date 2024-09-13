@@ -896,8 +896,7 @@ contract PatientIdentity {
             }
         }
     }
-
-    function revokeAccessData(address userAddress) external {
+   function revokeAccessData(address userAddress) external {
         if (accounts[msg.sender] == uint256(EntityType.Patient)) {
             sharedAllDoctorAddress[msg.sender].remove(userAddress);
             if (accounts[userAddress] == uint256(EntityType.Doctor)) {
