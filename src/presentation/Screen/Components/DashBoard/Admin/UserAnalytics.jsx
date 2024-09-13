@@ -7,7 +7,7 @@ import { BarChart } from 'react-native-gifted-charts';
 
 const Useranalytics = () => {
     const theme = useTheme();
-    const scheme = useColorScheme();  // Get the current color scheme
+    const scheme = useColorScheme();  
     const { userAnalytics } = useSelector((state) => state.admin);
     const [refreshing, setRefreshing] = useState(false);
     const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const Useranalytics = () => {
         console.log('patienterror', userAnalytics.error);
     }
 
-    // Use the current color scheme to dynamically adjust styles
+   
     const containerBackgroundColor = scheme === 'dark' ? theme.colors.background : theme.colors.background;
     const textColor = scheme === 'dark' ? theme.colors.text : theme.colors.text;
     const indicatorColor = scheme === 'dark' ? theme.colors.primary : theme.colors.primary;
