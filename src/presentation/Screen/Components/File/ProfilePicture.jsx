@@ -103,7 +103,7 @@ const ProfilePicture = ({ userData }) => {
               source={{ uri: file.uri }}
               style={{ height: 130, width: 130, borderRadius: 65 }}
             />
-          ) : profilePic === '' ? (
+          ) : profilePic === '' || profilePic === undefined || profilePic === null ? (
             <FastImage
               source={require('../../../../../assets/icon.png')}
               style={{ height: 130, width: 130, borderRadius: 65 }}
