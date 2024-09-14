@@ -209,9 +209,9 @@ export default function Dashboard() {
                   <ProfilePicture userData={medicalResearchLabData?.[9]} />
                 ) : String(connectedUserType) === '5' ? (
                   <ProfilePicture userData={patientData?.[10]} />
-                ) :String(connectedUserType) === '6' ? (
+                ) : String(connectedUserType) === '6' ? (
                   <ProfilePicture userData={adminData?.[4]} />
-                ): null}
+                ) : null}
                 {pploader ? (
                   <ActivityIndicator
                     size={60}
@@ -231,30 +231,30 @@ export default function Dashboard() {
                   {isLoading || address == null
                     ? console.log('l')
                     : String(connectedUserType) === '1'
-                      ? doctorData?.[2]
+                      ? doctorData?.[2]?ethers.utils.parseBytes32String(doctorData?.[2]):null
                       : String(connectedUserType) === '2'
-                        ? pathologistData?.[2]
+                        ?pathologistData?.[2]? ethers.utils.parseBytes32String(pathologistData?.[2]):null
                         : String(connectedUserType) === '4'
-                          ? pharmacyCompanyData?.[2]
+                          ?pharmacyCompanyData?.[2]? ethers.utils.parseBytes32String(pharmacyCompanyData?.[2]):null
                           : String(connectedUserType) === '3'
-                            ? medicalResearchLabData?.[2]
+                            ? medicalResearchLabData?.[2]?ethers.utils.parseBytes32String(medicalResearchLabData?.[2]):null
                             : String(connectedUserType) === '5'
-                              ?patientData?.[2]? ethers.utils.parseBytes32String(patientData?.[2]):null
+                              ? patientData?.[2] ? ethers.utils.parseBytes32String(patientData?.[2]) : null
                               : null}
                 </Text>
                 <Text style={{ marginBottom: 2 }}>
                   {isLoading || address == null
                     ? console.log('object')
                     : String(connectedUserType) === '1'
-                      ? doctorData?.[7]
+                      ?doctorData?.[7]? ethers.utils.parseBytes32String(doctorData?.[7]):null
                       : String(connectedUserType) === '2'
-                        ? pathologistData?.[8]
+                        ?pathologistData?.[8]? ethers.utils.parseBytes32String(pathologistData?.[8]):null
                         : String(connectedUserType) === '4'
-                          ? pharmacyCompanyData?.[7]
+                          ?pharmacyCompanyData?.[7]? ethers.utils.parseBytes32String(pharmacyCompanyData?.[7]):null
                           : String(connectedUserType) === '3'
-                            ? medicalResearchLabData?.[8]
+                            ?medicalResearchLabData?.[8]? ethers.utils.parseBytes32String(medicalResearchLabData?.[8]):null
                             : String(connectedUserType) === '5'
-                              ? patientData?.[7]? ethers.utils.parseBytes32String(patientData?.[7]):null: null}
+                              ? patientData?.[7] ? ethers.utils.parseBytes32String(patientData?.[7]) : null : null}
                 </Text>
                 <View
                   style={{
@@ -507,7 +507,7 @@ export default function Dashboard() {
             component={Useranalytics}
           />
 
-          
+
         </>
       )}
       {/* Doctor */}

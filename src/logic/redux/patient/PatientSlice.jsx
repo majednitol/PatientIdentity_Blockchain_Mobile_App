@@ -69,7 +69,9 @@ export const createPatientAccount = createAsyncThunk(
             });
             console.log('userOpResponse', userOpResponse);
         } catch (error) {
+            console.log("error",error)
             throw error;
+            
         }
     }
 );

@@ -94,12 +94,12 @@ const HealthProvider = ({ children }) => {
     providerUrl: "https://data-seed-prebsc-1-s1.bnbchain.org:8545",
 
     biconomyPaymasterApiKey:
-      "4bifvvKLp.b1244e49-65ec-4564-856f-0ff1ca20b4ca",
+      "lP2V-CoVx.a52796e8-95a8-437d-8726-f90cfcdad483",
     explorerUrl: "https://cardona-zkevm.polygonscan.com",
   }
   const config = {
     biconomyPaymasterApiKey: chains.biconomyPaymasterApiKey,
-    bundlerUrl: `https://bundler.biconomy.io/api/v2/${chains.chainId}/nJPK7B3ru.dd7f7861-190d-41bd-af80-6877f74b8f44`,
+    bundlerUrl: `https://paymaster.biconomy.io/api/v1/97/lP2V-CoVx.a52796e8-95a8-437d-8726-f90cfcdad483`,
 
   };
   useEffect(() => {

@@ -16,6 +16,7 @@ const ViewTopMedicine = () => {
   const onRefresh = () => {
     setRefreshing(true);
     getPharmacyCompanyAllData()
+    fetchTopMedicine()
     setRefreshing(false);
   };
   const fetchTopMedicine = () => {
@@ -27,7 +28,7 @@ const ViewTopMedicine = () => {
         medichine = pharmacyCompanyData?.[8].split(',').map(item => item.trim());
     }
       setTopMedichine(medichine)
-      console.log(medichine)
+      // console.log(medichine)
     }
   }
   useEffect(() => {

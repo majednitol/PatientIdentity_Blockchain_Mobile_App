@@ -3,7 +3,7 @@ import { contractAddress } from '../../../service/constant';
 import SmartAccount from '../../../service/wallet connect/SmartAccount';
 import { PaymasterMode } from '@biconomy/account';
 import Contract from '../../../data/repository/contract/contractRepo';
-
+import {ethers} from 'ethers'
 export const fetchMedicalResearchLabData = createAsyncThunk('fetchMedicalResearchLabData', async () => {
     try {
         const contract = await Contract.fetchContract()
@@ -40,6 +40,7 @@ export const createMedicalResearchLabAccount = createAsyncThunk('createMedicalRe
         });
         console.log('userOpResponse', userOpResponse)
     } catch (error) {
+        console.log("err from createMedicalResearchLabAccount",error)
         throw error;
     }
 });

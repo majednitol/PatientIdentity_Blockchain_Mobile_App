@@ -10,6 +10,7 @@ import { HealthContext } from '../../../logic/context/health';
 
 import Dashboard from './../Components/DashBoard/Dashboard';
 import SmartAccount from '../../../service/wallet connect/SmartAccount';
+import { ScrollView } from 'react-native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -54,6 +55,7 @@ const PrimaryScreen = ({ navigation }) => {
   
   return (
     <View style={styles.container} >
+      
       <Text style={styles.AccontText}>Tap and copy your address : </Text>
       <Text selectable={true} style={styles.addressText}>
          {address} 
@@ -65,6 +67,7 @@ const PrimaryScreen = ({ navigation }) => {
       <CustomButton onPress={goToScreen4} title="Medical Research Lab" />
       <CustomButton onPress={goToScreen5} title="Pharmacy company" />
       <CustomButton onPress={goToScreen6} title="Admin" />
+     
     </View>
   );
 };
@@ -85,7 +88,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: 'rgb(108, 99, 255)',
-    height: windowHeight * 0.15, // 20% of window height
+    height: windowHeight * 0.12, // 20% of window height
     width: windowWidth * 0.8, // 80% of window width
     justifyContent: 'center',
     alignItems: 'center',

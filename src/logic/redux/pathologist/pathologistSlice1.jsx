@@ -3,7 +3,7 @@ import { contractAddress } from '../../../service/constant';
 import SmartAccount from '../../../service/wallet connect/SmartAccount';
 import { PaymasterMode } from '@biconomy/account';
 import Contract from '../../../data/repository/contract/contractRepo';
-
+import {ethers} from 'ethers'
 export const fetchPathologistData = createAsyncThunk('fetchPathologistDat', async (saAddress) => {
     try {
         
@@ -47,13 +47,17 @@ export const createPathologistAccount = createAsyncThunk('createPathologistAccou
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         console.log('098876543234567', saAddress)
         const contract = await Contract.fetchContract();
+        const namePadded = ethers.utils.formatBytes32String(name);
+        const specializationAreaPadded = ethers.utils.formatBytes32String(specializationArea);
+        const birthdayPadded = ethers.utils.formatBytes32String(birthday);
+        const emailAddressPadded = ethers.utils.formatBytes32String(emailAddress);
         const tx = await contract?.populateTransaction.setPathologist(
             pathologistID,
-            name,
+            namePadded,
             BigInt(licenseNumber * 1),
-            specializationArea,
+            specializationAreaPadded,
             BigInt(totalExperience * 1),
-            birthday, emailAddress
+            birthdayPadded, emailAddressPadded
         );
 
         const tx1 = {
@@ -65,6 +69,7 @@ export const createPathologistAccount = createAsyncThunk('createPathologistAccou
         });
         console.log('userOpResponse', userOpResponse)
     } catch (error) {
+        console.log("error patholpgist account",error)
         throw error;
     }
 });

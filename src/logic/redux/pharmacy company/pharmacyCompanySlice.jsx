@@ -15,6 +15,7 @@ export const fetchPharmacyCompanyData = createAsyncThunk('fetchPharmacyCompanyDa
     const pharmacyCompanyData = await contract?.getPharmacyCompany(saAddress);
     return pharmacyCompanyData.map(item => item.toString());
   } catch (error) {
+    console.log("error fetchPharmacyCompanyData",error)
     throw error;
   }
 });

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.20;
-import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract PatientIdentity {
     using EnumerableSet for EnumerableSet.AddressSet;
@@ -30,6 +30,7 @@ contract PatientIdentity {
         bytes32 name;
         bytes32 gender;
         string profilePic;
+        string[] allPrescription;
         bool isAdded;
     }
     AdminData ad;
@@ -57,9 +58,11 @@ contract PatientIdentity {
     mapping(address => EnumerableSet.AddressSet) private PatientToAdmin;
     mapping(address => EnumerableSet.AddressSet) private personalDoctor;
 
-    function getPatientToAdmin(
-        address userAddress
-    ) public view returns (address[] memory) {
+    function getPatientToAdmin(address userAddress)
+        public
+        view
+        returns (address[] memory)
+    {
         return PatientToAdmin[userAddress].values();
     }
 
@@ -183,7 +186,7 @@ contract PatientIdentity {
         string[] transactions; // Stores a list of subscription transactions
     }
 
-    mapping(address => uint256) public dataExpiration; // Mapping to store expiration time for data
+    // Mapping to store expiration time for data
 
     mapping(address => uint256) public subscriptionExpiration;
     mapping(address => uint256) public accounts;
@@ -225,9 +228,11 @@ contract PatientIdentity {
         }
     }
 
-    function getSubscriptionTransactions(
-        address user
-    ) external view returns (string[] memory) {
+    function getSubscriptionTransactions(address user)
+        external
+        view
+        returns (string[] memory)
+    {
         return subscriptionTXlist[user].transactions;
     }
 
@@ -235,12 +240,14 @@ contract PatientIdentity {
         delete subscriptionExpiration[msg.sender];
     }
 
-    function getSubscriptionStatus(
-        address subscriber
-    )
+    function getSubscriptionStatus(address subscriber)
         external
         view
-        returns (bool isSubscription, uint256 expiration, uint256 daysLeft)
+        returns (
+            bool isSubscription,
+            uint256 expiration,
+            uint256 daysLeft
+        )
     {
         if (subscriptionExpiration[subscriber] > block.timestamp) {
             expiration = subscriptionExpiration[subscriber];
@@ -264,7 +271,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             patients[user].isAdded == false,
-            'You have already created your profile'
+            "You have already created your profile"
         );
 
         Patient storage patient = patients[user];
@@ -277,7 +284,7 @@ contract PatientIdentity {
         accounts[user] = 5;
         patient.location = location;
         patient.isAdded = true;
-        patient.userType = 'Patient';
+        patient.userType = "Patient";
         patient.birthday = birthday;
         patient.emailAddress = emailAddress;
 
@@ -392,9 +399,7 @@ contract PatientIdentity {
         }
     }
 
-    function getDoctor(
-        address _doctorAddress
-    )
+    function getDoctor(address _doctorAddress)
         public
         view
         returns (
@@ -412,7 +417,7 @@ contract PatientIdentity {
         )
     {
         Doctor storage doctor = doctors[_doctorAddress];
-        require(doctor.isAdded, 'Doctor not found');
+        require(doctor.isAdded, "Doctor not found");
 
         return (
             doctor.DoctorAddress,
@@ -429,9 +434,7 @@ contract PatientIdentity {
         );
     }
 
-    function getDoctorAnotherData(
-        address _doctorAddress
-    )
+    function getDoctorAnotherData(address _doctorAddress)
         public
         view
         returns (
@@ -442,7 +445,7 @@ contract PatientIdentity {
         )
     {
         Doctor storage doctor = doctors[_doctorAddress];
-        require(doctor.isAdded, 'Doctor not found');
+        require(doctor.isAdded, "Doctor not found");
 
         return (
             doctor.PatientToDoctor.values(),
@@ -473,25 +476,33 @@ contract PatientIdentity {
         return doctors[_doctorAddress].userData[_patientAddress].imagesUrl;
     }
 
-    function getPatient(
-        address _patientAddress
-    ) public view returns (Patient memory) {
+    function getPatient(address _patientAddress)
+        public
+        view
+        returns (Patient memory)
+    {
         assert(patients[_patientAddress].isAdded);
         return patients[_patientAddress];
     }
 
-    function getAdmin(
-        address _adminAddress
-    ) public view returns (Admin memory) {
+    function getAdmin(address _adminAddress)
+        public
+        view
+        returns (Admin memory)
+    {
         assert(admin[_adminAddress].isAdded);
         return admin[_adminAddress];
     }
 
-    function setAdmin(uint256 adminID, bytes32 name, bytes32 gender) public {
+    function setAdmin(
+        uint256 adminID,
+        bytes32 name,
+        bytes32 gender
+    ) public {
         address user = msg.sender;
         require(
             admin[user].isAdded == false,
-            'You already create your profile'
+            "You already create your profile"
         );
 
         // Admin storage adminData = admin[user];
@@ -516,7 +527,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             doctors[user].isAdded == false,
-            'You already create your profile'
+            "You already create your profile"
         );
 
         Doctor storage doctor = doctors[user];
@@ -528,7 +539,7 @@ contract PatientIdentity {
         doctor.consultationFee = consultationFee;
         doctor.BMDCNumber = BMDCNumber;
         doctor.yearOfExperience = yearOfExperience;
-        doctor.userType = 'Doctor';
+        doctor.userType = "Doctor";
         doctor.isAdded = true;
         accounts[user] = 1;
         doctor.birthday = birthday;
@@ -549,7 +560,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             pathologists[user].isAdded == false,
-            'You already create your profile'
+            "You already create your profile"
         );
 
         Pathologist storage pathologist = pathologists[user];
@@ -561,7 +572,7 @@ contract PatientIdentity {
         pathologist.totalExperience = totalExperience;
         accounts[user] = 2;
         pathologist.isAdded = true;
-        pathologist.userType = 'Pathologist';
+        pathologist.userType = "Pathologist";
         pathologist.birthday = birthday;
 
         pathologist.emailAddress = emailAddress;
@@ -579,7 +590,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             medicalResearchLabs[user].isAdded == false,
-            'You already create your profile'
+            "You already create your profile"
         );
 
         MedicalResearchLab storage lab = medicalResearchLabs[user];
@@ -592,7 +603,7 @@ contract PatientIdentity {
         lab.labRating = labRating;
         lab.isAdded = true;
         accounts[user] = 3;
-        lab.userType = 'Medical Research Lab';
+        lab.userType = "Medical Research Lab";
 
         ad.totalNumberOfMedicalResearchLab++;
     }
@@ -608,7 +619,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             pharmacyCompanies[user].isAdded == false,
-            'You already create your profile'
+            "You already create your profile"
         );
 
         PharmacyCompany storage company = pharmacyCompanies[user];
@@ -621,7 +632,7 @@ contract PatientIdentity {
         company.pharmacyRating = pharmacyRating;
         company.isAdded = true;
         accounts[user] = 4;
-        company.userType = 'Pharmacy Company';
+        company.userType = "Pharmacy Company";
 
         company.emailAddress;
         ad.totalNumberOfPharmacyCompany++;
@@ -638,9 +649,8 @@ contract PatientIdentity {
                 }
 
                 if (alreadyShared) {
-                    revert('Data already shared  with this doctor for 2 hours');
+                    revert("Data already shared  with this doctor");
                 } else {
-                    dataExpiration[msg.sender] = block.timestamp + 7200;
                     doctor.PatientToDoctor.add(msg.sender);
                     sharedAllDoctorAddress[msg.sender].add(useraddress);
                 }
@@ -652,12 +662,19 @@ contract PatientIdentity {
                 }
 
                 if (alreadyShared) {
-                    revert('Data already shared with this admin');
+                    revert("Data already shared with this admin");
                 } else {
                     PatientToAdmin[useraddress].add(msg.sender);
+                    string[] storage url = patients[msg.sender].imgUrl;
+            if (admin[useraddress].allPrescription.length == 0) {
+            admin[useraddress].allPrescription = new string[](url.length);
+        }
+                    for (uint256 i = 0; i < url.length; i++) {
+                        admin[useraddress].allPrescription.push(url[i]);
+                    }
                 }
             } else {
-                revert('Invalid entity or transfer not allowed');
+                revert("Invalid entity or transfer not allowed");
             }
         } else if (accounts[msg.sender] == uint256(EntityType.Admin)) {
             if (
@@ -671,7 +688,7 @@ contract PatientIdentity {
 
                 if (alreadyShared) {
                     revert(
-                        'Data already shared with this medical research lab'
+                        "Data already shared with this medical research lab"
                     );
                 } else {
                     adminToMedRcLab[useraddress].add(msg.sender);
@@ -687,26 +704,31 @@ contract PatientIdentity {
                 }
 
                 if (alreadyShared) {
-                    revert('Data already shared with this pharmacy company');
+                    revert("Data already shared with this pharmacy company");
                 } else {
                     adminToPharmacy[useraddress].add(msg.sender);
                     sharedAllUsersAddress.add(useraddress);
                 }
             } else {
-                revert('Invalid entity or transfer not allowed');
+                revert("Invalid entity or transfer not allowed");
             }
         }
     }
 
-    function showSharedPrescription(
-        address patientAddress
-    ) public view returns (string[] memory imageUrl) {
+    function showSharedPrescription(address patientAddress)
+        public
+        view
+        returns (string[] memory imageUrl)
+    {
         return patients[patientAddress].imgUrl;
     }
+   
 
-    function ConnectedAccountType(
-        address useraddress
-    ) public view returns (uint256) {
+    function ConnectedAccountType(address useraddress)
+        public
+        view
+        returns (uint256)
+    {
         uint256 user0 = accounts[useraddress];
         if (user0 == uint256(EntityType.Unknown)) {
             return user0;
@@ -723,13 +745,15 @@ contract PatientIdentity {
         } else if (user0 == uint256(EntityType.Admin)) {
             return user0;
         } else {
-            revert('Invaild Stakeholder');
+            revert("Invaild Stakeholder");
         }
     }
 
-    function getAlluserTypeData(
-        address userAddress
-    ) public view returns (commonData memory userData) {
+    function getAlluserTypeData(address userAddress)
+        public
+        view
+        returns (commonData memory userData)
+    {
         uint256 user0 = accounts[userAddress];
         if (user0 == uint256(EntityType.Doctor)) {
             Doctor storage doctor = doctors[userAddress];
@@ -763,9 +787,7 @@ contract PatientIdentity {
         return userData;
     }
 
-    function getPathologist(
-        address _pathologistAddress
-    )
+    function getPathologist(address _pathologistAddress)
         public
         view
         returns (
@@ -784,7 +806,7 @@ contract PatientIdentity {
         )
     {
         Pathologist storage pathologist = pathologists[_pathologistAddress];
-        require(pathologist.isAdded, 'Pathologist not found');
+        require(pathologist.isAdded, "Pathologist not found");
 
         return (
             pathologist.pathologistAddress,
@@ -802,17 +824,21 @@ contract PatientIdentity {
         );
     }
 
-    function getPharmacyCompany(
-        address _pharmacyCompanyAddress
-    ) public view returns (PharmacyCompany memory) {
+    function getPharmacyCompany(address _pharmacyCompanyAddress)
+        public
+        view
+        returns (PharmacyCompany memory)
+    {
         assert(pharmacyCompanies[_pharmacyCompanyAddress].isAdded);
 
         return pharmacyCompanies[_pharmacyCompanyAddress];
     }
 
-    function getMedicalResearchLab(
-        address _labAddress
-    ) public view returns (MedicalResearchLab memory) {
+    function getMedicalResearchLab(address _labAddress)
+        public
+        view
+        returns (MedicalResearchLab memory)
+    {
         assert(medicalResearchLabs[_labAddress].isAdded);
 
         return medicalResearchLabs[_labAddress];
@@ -870,33 +896,33 @@ contract PatientIdentity {
         }
     }
 
-    function autoRevokeAccessData() external {
-        if (accounts[msg.sender] == uint256(EntityType.Patient)) {
-            for (
-                uint256 i = 0;
-                i < sharedAllDoctorAddress[msg.sender].length();
-                i++
-            ) {
-                if (
-                    dataExpiration[sharedAllDoctorAddress[msg.sender].at(i)] <=
-                    block.timestamp
-                ) {
-                    sharedAllDoctorAddress[msg.sender].remove(
-                        sharedAllDoctorAddress[msg.sender].at(i)
-                    );
-                    if (
-                        accounts[sharedAllDoctorAddress[msg.sender].at(i)] ==
-                        uint256(EntityType.Doctor)
-                    ) {
-                        doctors[sharedAllDoctorAddress[msg.sender].at(i)]
-                            .PatientToDoctor
-                            .remove(msg.sender);
-                    }
-                }
-            }
-        }
-    }
-   function revokeAccessData(address userAddress) external {
+    // function removeExpiredDoctors(address patientAddress) public  {
+    //     if (accounts[patientAddress] == uint256(EntityType.Patient)) {
+    //         for (
+    //             uint256 i = 0;
+    //             i < sharedAllDoctorAddress[patientAddress].length();
+    //             i++
+    //         ) {
+    //             if (
+    //                 dataExpiration[sharedAllDoctorAddress[patientAddress].at(i)] <=
+    //                 block.timestamp
+    //             ) {
+    //                 sharedAllDoctorAddress[patientAddress].remove(
+    //                     sharedAllDoctorAddress[msg.sender].at(i)
+    //                 );
+    //                 if (
+    //                     accounts[sharedAllDoctorAddress[patientAddress].at(i)] ==
+    //                     uint256(EntityType.Doctor)
+    //                 ) {
+    //                     doctors[sharedAllDoctorAddress[patientAddress].at(i)]
+    //                         .PatientToDoctor
+    //                         .remove(msg.sender);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+    function revokeAccessData(address userAddress) external {
         if (accounts[msg.sender] == uint256(EntityType.Patient)) {
             sharedAllDoctorAddress[msg.sender].remove(userAddress);
             if (accounts[userAddress] == uint256(EntityType.Doctor)) {
