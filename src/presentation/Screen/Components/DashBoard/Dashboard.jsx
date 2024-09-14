@@ -157,6 +157,7 @@ export default function Dashboard() {
     if (connectedUserType) {
       fetchAddress()
       fetchAddressBalance()
+
     }
   }, [connectedUserType]);
   if (error) {
@@ -210,7 +211,7 @@ export default function Dashboard() {
                 ) : String(connectedUserType) === '5' ? (
                   <ProfilePicture userData={patientData?.[10]} />
                 ) : String(connectedUserType) === '6' ? (
-                  <ProfilePicture userData={adminData?.[4]} />
+                  <ProfilePicture userData={adminData?.data?.[4]} />
                 ) : null}
                 {pploader ? (
                   <ActivityIndicator
@@ -231,30 +232,31 @@ export default function Dashboard() {
                   {isLoading || address == null
                     ? console.log('l')
                     : String(connectedUserType) === '1'
-                      ? doctorData?.[2]?ethers.utils.parseBytes32String(doctorData?.[2]):null
+                      ? doctorData?.[2] ? ethers.utils.parseBytes32String(doctorData?.[2]) : null
                       : String(connectedUserType) === '2'
-                        ?pathologistData?.[2]? ethers.utils.parseBytes32String(pathologistData?.[2]):null
+                        ? pathologistData?.[2] ? ethers.utils.parseBytes32String(pathologistData?.[2]) : null
                         : String(connectedUserType) === '4'
-                          ?pharmacyCompanyData?.[2]? ethers.utils.parseBytes32String(pharmacyCompanyData?.[2]):null
+                          ? pharmacyCompanyData?.[2] ? ethers.utils.parseBytes32String(pharmacyCompanyData?.[2]) : null
                           : String(connectedUserType) === '3'
-                            ? medicalResearchLabData?.[2]?ethers.utils.parseBytes32String(medicalResearchLabData?.[2]):null
+                            ? medicalResearchLabData?.[2] ? ethers.utils.parseBytes32String(medicalResearchLabData?.[2]) : null
                             : String(connectedUserType) === '5'
                               ? patientData?.[2] ? ethers.utils.parseBytes32String(patientData?.[2]) : null
-                              : null}
+                              : String(connectedUserType) === '6' ? adminData?.data?.[2] ? ethers.utils.parseBytes32String(adminData?.data?.[2]) : null : null}
                 </Text>
                 <Text style={{ marginBottom: 2 }}>
                   {isLoading || address == null
                     ? console.log('object')
                     : String(connectedUserType) === '1'
-                      ?doctorData?.[7]? ethers.utils.parseBytes32String(doctorData?.[7]):null
+                      ? doctorData?.[7] ? ethers.utils.parseBytes32String(doctorData?.[7]) : null
                       : String(connectedUserType) === '2'
-                        ?pathologistData?.[8]? ethers.utils.parseBytes32String(pathologistData?.[8]):null
+                        ? pathologistData?.[8] ? ethers.utils.parseBytes32String(pathologistData?.[8]) : null
                         : String(connectedUserType) === '4'
-                          ?pharmacyCompanyData?.[7]? ethers.utils.parseBytes32String(pharmacyCompanyData?.[7]):null
+                          ? pharmacyCompanyData?.[7] ? ethers.utils.parseBytes32String(pharmacyCompanyData?.[7]) : null
                           : String(connectedUserType) === '3'
-                            ?medicalResearchLabData?.[8]? ethers.utils.parseBytes32String(medicalResearchLabData?.[8]):null
+                            ? medicalResearchLabData?.[8] ? ethers.utils.parseBytes32String(medicalResearchLabData?.[8]) : null
                             : String(connectedUserType) === '5'
-                              ? patientData?.[7] ? ethers.utils.parseBytes32String(patientData?.[7]) : null : null}
+                              ? patientData?.[7] ? ethers.utils.parseBytes32String(patientData?.[7]) : null : String(connectedUserType) === '6'
+                              ? adminData?.data?.[7] ? ethers.utils.parseBytes32String(adminData?.data?.[7]) : null : null}
                 </Text>
                 <View
                   style={{
