@@ -135,6 +135,7 @@ export default function Dashboard() {
 
     setAddress(saAddress)
   }
+  const { adminData } = useSelector((state) => state.admin);
   const { doctorData } = useSelector((state) => state.doctor);
   const { medicalResearchLabData } = useSelector((state) => state.medicalResearchLab);
   const { pharmacyCompanyData } = useSelector((state) => state.pharmacyCompany);
@@ -208,7 +209,9 @@ export default function Dashboard() {
                   <ProfilePicture userData={medicalResearchLabData?.[9]} />
                 ) : String(connectedUserType) === '5' ? (
                   <ProfilePicture userData={patientData?.[10]} />
-                ) : null}
+                ) :String(connectedUserType) === '6' ? (
+                  <ProfilePicture userData={adminData?.[4]} />
+                ): null}
                 {pploader ? (
                   <ActivityIndicator
                     size={60}

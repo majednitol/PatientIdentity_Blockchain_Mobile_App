@@ -25,15 +25,19 @@ export const createPathologistAccount = createAsyncThunk('createPathologistAccou
   
       try {
           const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+          const namePadded = ethers.utils.formatBytes32String(name);
+          const specializationAreaPadded = ethers.utils.formatBytes32String(specializationArea);
+          const birthdayPadded = ethers.utils.formatBytes32String(birthday);
+          const emailAddressPadded = ethers.utils.formatBytes32String(emailAddress);
           console.log('098876543234567', saAddress)
           const contract = await Contract.fetchContract();
           const tx = await contract?.populateTransaction.setPathologist(
-            pathologistID,
-            name,
+            BigInt(pathologistID* 1),
+            namePadded,
             BigInt(licenseNumber * 1),
-            specializationArea,
+            specializationAreaPadded,
             BigInt(totalExperience * 1),
-            birthday, emailAddress
+            birthdayPadded, emailAddressPadded
           );
       
           const tx1 = {

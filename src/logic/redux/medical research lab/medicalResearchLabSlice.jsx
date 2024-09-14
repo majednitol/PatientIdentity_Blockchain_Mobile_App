@@ -20,12 +20,15 @@ export const createMedicalResearchLabAccount = createAsyncThunk('createMedicalRe
     try {
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         const contract = await Contract.fetchContract();
+        const namePadded = ethers.utils.formatBytes32String(name);
+        const researchAreaPadded = ethers.utils.formatBytes32String(researchArea);
+
         const tx = await contract?.populateTransaction.setMedicalResearchLab(
-            labID,
-            name,
+            BigInt(labID * 1),
+            namePadded,
             BigInt(licenseID * 1),
-            researchArea,
-            labRating,
+            researchAreaPadded,
+            BigInt(labRating * 1),
         );
 
         const tx1 = {
@@ -52,7 +55,7 @@ const medicalResearchLabSlice = createSlice({
         builder.addCase(fetchMedicalResearchLabData.pending, (state) => {
             state.loading = true;
             state.error = null;
-            
+
         });
         builder.addCase(fetchMedicalResearchLabData.fulfilled, (state, action) => {
             state.loading = false;
@@ -77,8 +80,8 @@ const medicalResearchLabSlice = createSlice({
             state.loading = false;
             state.error = action.error.message;
         });
-       
-       
+
+
 
     }
 

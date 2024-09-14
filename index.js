@@ -36,8 +36,8 @@ registerTranslation('en', {
 })
 export default function Main() {
   const colorScheme = useColorScheme();
-  
- 
+
+
   return (
     <PaperProvider theme={colorScheme === 'dark' ? darkMode : lightMode}>
       <App />

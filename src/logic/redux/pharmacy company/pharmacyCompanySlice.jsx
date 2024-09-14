@@ -27,12 +27,14 @@ export const createPharmacyCompanyAccount = createAsyncThunk('createPharmacyComp
 
     try {
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
-        const contract = await Contract.fetchContract();
+      const contract = await Contract.fetchContract();
+      const namePadded = ethers.utils.formatBytes32String(name);
+      const productInformationPadded = ethers.utils.formatBytes32String(productInformation);
         const tx = await contract?.populateTransaction.setPharmacyCompany(
           BigInt(companyID * 1),
-          name,
+          namePadded,
           BigInt(licenseID * 1),
-          productInformation,
+          productInformationPadded,
           BigInt(pharmacyRating * 1),
         );
     

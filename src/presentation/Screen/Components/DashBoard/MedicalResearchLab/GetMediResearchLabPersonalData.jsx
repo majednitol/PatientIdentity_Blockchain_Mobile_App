@@ -6,6 +6,7 @@ import { ActivityIndicator, Card, MD2Colors, Text, useTheme } from 'react-native
 import { HealthContext } from '../../../../../logic/context/health';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMedicalResearchLabData } from '../../../../../logic/redux/medical research lab/medicalResearchLabSlice';
+import { ethers } from 'ethers';
 
 
 const GetMediResearchLabPersonalData = () => {
@@ -36,10 +37,10 @@ const GetMediResearchLabPersonalData = () => {
             <Text style={styles.title}>Medical Reserch Lab Information</Text>
             <CustomText label="Account " value={medicalResearchLabData?.[0]} />
             {/* <CustomText label="EmailAddress" value={emailAddress} /> */}
-            <CustomText label="Lab Name " value={medicalResearchLabData?.[2]} />
+            <CustomText label="Lab Name " value={ethers.utils.parseBytes32String(medicalResearchLabData?.[2])} />
             <CustomText label="LicenseID" value={String(medicalResearchLabData?.[3])} />
             <CustomText label="LabID" value={String(medicalResearchLabData?.[1])} />
-            <CustomText label="Research Area" value={medicalResearchLabData?.[4]} />
+            <CustomText label="Research Area" value={ethers.utils.parseBytes32String(medicalResearchLabData?.[4])} />
             <CustomText
               label="Lab Rating"
               value={String(medicalResearchLabData?.[5])}

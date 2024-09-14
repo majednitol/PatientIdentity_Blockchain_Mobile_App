@@ -6,6 +6,7 @@ import Animated, {FadeInDown, FadeInUp} from 'react-native-reanimated';
 import { HealthContext } from '../../../../../logic/context/health';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPharmacyCompanyData } from '../../../../../logic/redux/pharmacy company/pharmacyCompanySlice';
+import { ethers } from 'ethers';
 
 const GetPharmacyCompanyPersonalData = () => {
   const theme = useTheme();
@@ -38,11 +39,11 @@ const GetPharmacyCompanyPersonalData = () => {
               <CustomText label="Account " value={pharmacyCompanyData?.[0]} />
               {/* <CustomText label="EmailAddress" value={emailAddress} /> */}
             <CustomText label="companyID " value={String(pharmacyCompanyData?.[1])} />
-            <CustomText label="Company Name" value={pharmacyCompanyData?.[2]} />
+            <CustomText label="Company Name" value={ethers.utils.parseBytes32String(pharmacyCompanyData?.[2])} />
             <CustomText label="licenseID" value={String(pharmacyCompanyData?.[3])} />
             <CustomText
               label="product Information"
-              value={pharmacyCompanyData?.[4]}
+              value={ethers.utils.parseBytes32String(pharmacyCompanyData?.[4])}
             />
             <CustomText
               label="pharmacyRating"

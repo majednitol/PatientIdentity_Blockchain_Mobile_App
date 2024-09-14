@@ -15,12 +15,11 @@ const { width, height } = Dimensions.get('window');
 
 const SetDoctorPersonalData = () => {
   const {
-    AddDoctor, ConnectedEntityType, ConnectedAccountUser, generateUniqueId, loader, setAccountCreationLoader, btnclick,emailAddress,smartAccount,login
-  } = useContext(HealthContext);
+    generateUniqueId, btnclick,emailAddress  } = useContext(HealthContext);
   const navigation = useNavigation()
   const dispatch = useDispatch();
-  const { loading, error, connectedUserType } = useSelector((state) => state.connectedUser);
-  const { loading:accountCreationLoader, error:accountCreationError } = useSelector((state) => state.doctor);
+  const { loading, connectedUserType } = useSelector((state) => state.connectedUser);
+  const { loading:accountCreationLoader } = useSelector((state) => state.doctor);
   const [call, setCall] = useState(false);
   // useEffect(() => {
 

@@ -2,9 +2,9 @@ import { View } from 'react-native';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Card, MD2Colors, Text, useTheme } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import {  fetchPathologistData } from '../../../../../logic/redux/pathologist/pathologistSlice1';
+import { fetchPathologistData } from '../../../../../logic/redux/pathologist/pathologistSlice1';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
-
+import { ethers } from 'ethers'
 
 
 const GetPathologistPersonalData = () => {
@@ -16,8 +16,8 @@ const GetPathologistPersonalData = () => {
     dispatch(fetchPathologistData(saAddress));
   }
   useEffect(() => {
-    
-    console.log("pathoData",  pathologistData)
+
+    console.log("pathoData", pathologistData)
   }, [dispatch]);
 
   return (
@@ -29,17 +29,17 @@ const GetPathologistPersonalData = () => {
         <Card>
           <Card.Content>
             <Text style={styles.title}>Pathologist Personal Information</Text>
-                        <CustomText label="Account " value={pathologistData?.[0]} />
-                        <CustomText label="EmailAddress" value={pathologistData?.[12]} />
-                        <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
-                        <CustomText label="Pathologist Name" value={pathologistData?.[2]} />
-                        <CustomText label="Pathologist BirthDay" value={pathologistData?.[10]} />
-                        <CustomText label="licenseNumber" value={String(pathologistData?.[3])} />
-                        <CustomText label="Specialization Area" value={pathologistData?.[4]} />
-                        <CustomText
-                            label="totalExperience"
-                            value={String(pathologistData?.[5])}
-                        />
+            <CustomText label="Account " value={pathologistData?.[0]} />
+            <CustomText label="EmailAddress" value={ethers.utils.parseBytes32String(pathologistData?.[12])} />
+            <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
+            <CustomText label="Pathologist Name" value={ethers.utils.parseBytes32String(pathologistData?.[2])} />
+            <CustomText label="Pathologist BirthDay" value={ethers.utils.parseBytes32String(pathologistData?.[10])} />
+            <CustomText label="licenseNumber" value={String(pathologistData?.[3])} />
+            <CustomText label="Specialization Area" value={ethers.utils.parseBytes32String(pathologistData?.[4])} />
+            <CustomText
+              label="totalExperience"
+              value={String(pathologistData?.[5])}
+            />
           </Card.Content>
         </Card>
       )}
