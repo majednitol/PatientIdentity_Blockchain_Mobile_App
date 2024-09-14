@@ -3,7 +3,7 @@
 
 require("@nomicfoundation/hardhat-toolbox");
 const API_URL = `https://data-seed-prebsc-1-s1.bnbchain.org:8545`
-const PRIVATE_KEY = "e3804017109d1c513f95c87a5c29a7b6d56b2b8325d8754c9116fdc2356d1611"
+const PRIVATE_KEY = "ffe5997f06ac02c03bd71e431a758c46e30ba655591732b6b33a25de2f5ba0d0"
 
 module.exports = {
   solidity: {
@@ -11,7 +11,7 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs:200
+        runs: 200
       }
     }
   },
@@ -25,6 +25,12 @@ module.exports = {
       accounts: [`${PRIVATE_KEY}`],
       chainId: 114,
     },
+    Amoy: {
+      url: "https://rpc-amoy.polygon.technology/",
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 80002,
+      saveDeployments: true,
+    }
   }
-  
+
 };
