@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.20;
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
 contract PatientIdentity {
+    address public ownerAddress;
+
+    constructor() {
+        ownerAddress = msg.sender;
+    }
+
     using EnumerableSet for EnumerableSet.AddressSet;
     struct commonData {
         bytes32 userType;
@@ -32,6 +37,11 @@ contract PatientIdentity {
         string profilePic;
         string[] allPrescription;
         bool isAdded;
+        bytes32 userType;
+        bytes32 birthday;
+        bytes32 emailAddress;
+        uint256 age;
+        bytes32 location;
     }
     AdminData ad;
 
@@ -39,6 +49,13 @@ contract PatientIdentity {
         return ad;
     }
 
+    EnumerableSet.AddressSet private allAdmins;
+    uint256 public numberOfConfirmations;
+    mapping(address => bool) public isConfirmed;
+    modifier onlyAdmin() {
+        require(admin[msg.sender].isAdded, 'You must be an admin');
+        _;
+    }
     struct Patient {
         address patientAddress;
         uint256 patientID;
@@ -58,11 +75,9 @@ contract PatientIdentity {
     mapping(address => EnumerableSet.AddressSet) private PatientToAdmin;
     mapping(address => EnumerableSet.AddressSet) private personalDoctor;
 
-    function getPatientToAdmin(address userAddress)
-        public
-        view
-        returns (address[] memory)
-    {
+    function getPatientToAdmin(
+        address userAddress
+    ) public view returns (address[] memory) {
         return PatientToAdmin[userAddress].values();
     }
 
@@ -228,11 +243,9 @@ contract PatientIdentity {
         }
     }
 
-    function getSubscriptionTransactions(address user)
-        external
-        view
-        returns (string[] memory)
-    {
+    function getSubscriptionTransactions(
+        address user
+    ) external view returns (string[] memory) {
         return subscriptionTXlist[user].transactions;
     }
 
@@ -240,14 +253,12 @@ contract PatientIdentity {
         delete subscriptionExpiration[msg.sender];
     }
 
-    function getSubscriptionStatus(address subscriber)
+    function getSubscriptionStatus(
+        address subscriber
+    )
         external
         view
-        returns (
-            bool isSubscription,
-            uint256 expiration,
-            uint256 daysLeft
-        )
+        returns (bool isSubscription, uint256 expiration, uint256 daysLeft)
     {
         if (subscriptionExpiration[subscriber] > block.timestamp) {
             expiration = subscriptionExpiration[subscriber];
@@ -271,7 +282,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             patients[user].isAdded == false,
-            "You have already created your profile"
+            'You have already created your profile'
         );
 
         Patient storage patient = patients[user];
@@ -284,7 +295,7 @@ contract PatientIdentity {
         accounts[user] = 5;
         patient.location = location;
         patient.isAdded = true;
-        patient.userType = "Patient";
+        patient.userType = 'Patient';
         patient.birthday = birthday;
         patient.emailAddress = emailAddress;
 
@@ -399,7 +410,9 @@ contract PatientIdentity {
         }
     }
 
-    function getDoctor(address _doctorAddress)
+    function getDoctor(
+        address _doctorAddress
+    )
         public
         view
         returns (
@@ -417,7 +430,7 @@ contract PatientIdentity {
         )
     {
         Doctor storage doctor = doctors[_doctorAddress];
-        require(doctor.isAdded, "Doctor not found");
+        require(doctor.isAdded, 'Doctor not found');
 
         return (
             doctor.DoctorAddress,
@@ -434,7 +447,9 @@ contract PatientIdentity {
         );
     }
 
-    function getDoctorAnotherData(address _doctorAddress)
+    function getDoctorAnotherData(
+        address _doctorAddress
+    )
         public
         view
         returns (
@@ -445,7 +460,7 @@ contract PatientIdentity {
         )
     {
         Doctor storage doctor = doctors[_doctorAddress];
-        require(doctor.isAdded, "Doctor not found");
+        require(doctor.isAdded, 'Doctor not found');
 
         return (
             doctor.PatientToDoctor.values(),
@@ -476,20 +491,16 @@ contract PatientIdentity {
         return doctors[_doctorAddress].userData[_patientAddress].imagesUrl;
     }
 
-    function getPatient(address _patientAddress)
-        public
-        view
-        returns (Patient memory)
-    {
+    function getPatient(
+        address _patientAddress
+    ) public view returns (Patient memory) {
         assert(patients[_patientAddress].isAdded);
         return patients[_patientAddress];
     }
 
-    function getAdmin(address _adminAddress)
-        public
-        view
-        returns (Admin memory)
-    {
+    function getAdmin(
+        address _adminAddress
+    ) public view returns (Admin memory) {
         assert(admin[_adminAddress].isAdded);
         return admin[_adminAddress];
     }
@@ -497,12 +508,16 @@ contract PatientIdentity {
     function setAdmin(
         uint256 adminID,
         bytes32 name,
-        bytes32 gender
+        bytes32 gender,
+        bytes32 birthday,
+        bytes32 emailAddress,
+        uint256 age,
+        bytes32 location
     ) public {
         address user = msg.sender;
         require(
             admin[user].isAdded == false,
-            "You already create your profile"
+            'You already create your profile'
         );
 
         // Admin storage adminData = admin[user];
@@ -512,6 +527,29 @@ contract PatientIdentity {
         admin[user].gender = gender;
         admin[user].isAdded = true;
         accounts[user] = 6;
+        admin[user].userType = 'Admin';
+        admin[user].birthday = birthday;
+        admin[user].emailAddress = emailAddress;
+        admin[user].age = age;
+        admin[user].location = location;
+        allAdmins.add(user);
+    }
+
+    function giveConfirmation(address _address) public onlyAdmin {
+        require(isAdmin(_address), 'Address is not an admin');
+        require(isAddressInAllAdmins(_address), 'Address is not in allAdmins');
+        require(!isConfirmed[_address], 'Address is already confirmed');
+
+        isConfirmed[_address] = true;
+        numberOfConfirmations++;
+    }
+
+    function isAdmin(address _address) public view returns (bool) {
+        return admin[_address].isAdded;
+    }
+
+    function isAddressInAllAdmins(address _address) public view returns (bool) {
+        return allAdmins.contains(_address);
     }
 
     // Setters and Getters for Doctor struct
@@ -527,7 +565,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             doctors[user].isAdded == false,
-            "You already create your profile"
+            'You already create your profile'
         );
 
         Doctor storage doctor = doctors[user];
@@ -539,7 +577,7 @@ contract PatientIdentity {
         doctor.consultationFee = consultationFee;
         doctor.BMDCNumber = BMDCNumber;
         doctor.yearOfExperience = yearOfExperience;
-        doctor.userType = "Doctor";
+        doctor.userType = 'Doctor';
         doctor.isAdded = true;
         accounts[user] = 1;
         doctor.birthday = birthday;
@@ -560,7 +598,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             pathologists[user].isAdded == false,
-            "You already create your profile"
+            'You already create your profile'
         );
 
         Pathologist storage pathologist = pathologists[user];
@@ -572,7 +610,7 @@ contract PatientIdentity {
         pathologist.totalExperience = totalExperience;
         accounts[user] = 2;
         pathologist.isAdded = true;
-        pathologist.userType = "Pathologist";
+        pathologist.userType = 'Pathologist';
         pathologist.birthday = birthday;
 
         pathologist.emailAddress = emailAddress;
@@ -590,7 +628,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             medicalResearchLabs[user].isAdded == false,
-            "You already create your profile"
+            'You already create your profile'
         );
 
         MedicalResearchLab storage lab = medicalResearchLabs[user];
@@ -603,7 +641,7 @@ contract PatientIdentity {
         lab.labRating = labRating;
         lab.isAdded = true;
         accounts[user] = 3;
-        lab.userType = "Medical Research Lab";
+        lab.userType = 'Medical Research Lab';
 
         ad.totalNumberOfMedicalResearchLab++;
     }
@@ -619,7 +657,7 @@ contract PatientIdentity {
         address user = msg.sender;
         require(
             pharmacyCompanies[user].isAdded == false,
-            "You already create your profile"
+            'You already create your profile'
         );
 
         PharmacyCompany storage company = pharmacyCompanies[user];
@@ -632,7 +670,7 @@ contract PatientIdentity {
         company.pharmacyRating = pharmacyRating;
         company.isAdded = true;
         accounts[user] = 4;
-        company.userType = "Pharmacy Company";
+        company.userType = 'Pharmacy Company';
 
         company.emailAddress;
         ad.totalNumberOfPharmacyCompany++;
@@ -649,34 +687,44 @@ contract PatientIdentity {
                 }
 
                 if (alreadyShared) {
-                    revert("Data already shared  with this doctor");
+                    revert('Data already shared  with this doctor');
                 } else {
                     doctor.PatientToDoctor.add(msg.sender);
                     sharedAllDoctorAddress[msg.sender].add(useraddress);
                 }
-            } else if (accounts[useraddress] == uint256(EntityType.Admin)) {
+            } else if (accounts[ownerAddress] == uint256(EntityType.Admin)) {
                 bool alreadyShared = false;
 
-                if (PatientToAdmin[useraddress].contains(msg.sender)) {
+                if (PatientToAdmin[ownerAddress].contains(msg.sender)) {
                     alreadyShared = true;
                 }
 
                 if (alreadyShared) {
-                    revert("Data already shared with this admin");
+                    revert('Data already shared with this admin');
                 } else {
-                    PatientToAdmin[useraddress].add(msg.sender);
+                    PatientToAdmin[ownerAddress].add(msg.sender);
                     string[] storage url = patients[msg.sender].imgUrl;
-            if (admin[useraddress].allPrescription.length == 0) {
-            admin[useraddress].allPrescription = new string[](url.length);
-        }
+                    if (admin[ownerAddress].allPrescription.length == 0) {
+                        admin[ownerAddress].allPrescription = new string[](
+                            url.length
+                        );
+                    }
                     for (uint256 i = 0; i < url.length; i++) {
-                        admin[useraddress].allPrescription.push(url[i]);
+                        admin[ownerAddress].allPrescription.push(url[i]);
                     }
                 }
             } else {
-                revert("Invalid entity or transfer not allowed");
+                revert('Invalid entity or transfer not allowed');
             }
         } else if (accounts[msg.sender] == uint256(EntityType.Admin)) {
+            require(
+                ownerAddress == msg.sender,
+                'Only owner can share this data'
+            );
+            require(
+                allAdmins.length() == numberOfConfirmations,
+                'All admin need to be confirmed before you can share'
+            );
             if (
                 accounts[useraddress] == uint256(EntityType.MedicalResearchLab)
             ) {
@@ -688,7 +736,7 @@ contract PatientIdentity {
 
                 if (alreadyShared) {
                     revert(
-                        "Data already shared with this medical research lab"
+                        'Data already shared with this medical research lab'
                     );
                 } else {
                     adminToMedRcLab[useraddress].add(msg.sender);
@@ -704,31 +752,26 @@ contract PatientIdentity {
                 }
 
                 if (alreadyShared) {
-                    revert("Data already shared with this pharmacy company");
+                    revert('Data already shared with this pharmacy company');
                 } else {
                     adminToPharmacy[useraddress].add(msg.sender);
                     sharedAllUsersAddress.add(useraddress);
                 }
             } else {
-                revert("Invalid entity or transfer not allowed");
+                revert('Invalid entity or transfer not allowed');
             }
         }
     }
 
-    function showSharedPrescription(address patientAddress)
-        public
-        view
-        returns (string[] memory imageUrl)
-    {
+    function showSharedPrescription(
+        address patientAddress
+    ) public view returns (string[] memory imageUrl) {
         return patients[patientAddress].imgUrl;
     }
-   
 
-    function ConnectedAccountType(address useraddress)
-        public
-        view
-        returns (uint256)
-    {
+    function ConnectedAccountType(
+        address useraddress
+    ) public view returns (uint256) {
         uint256 user0 = accounts[useraddress];
         if (user0 == uint256(EntityType.Unknown)) {
             return user0;
@@ -745,15 +788,13 @@ contract PatientIdentity {
         } else if (user0 == uint256(EntityType.Admin)) {
             return user0;
         } else {
-            revert("Invaild Stakeholder");
+            revert('Invaild Stakeholder');
         }
     }
 
-    function getAlluserTypeData(address userAddress)
-        public
-        view
-        returns (commonData memory userData)
-    {
+    function getAlluserTypeData(
+        address userAddress
+    ) public view returns (commonData memory userData) {
         uint256 user0 = accounts[userAddress];
         if (user0 == uint256(EntityType.Doctor)) {
             Doctor storage doctor = doctors[userAddress];
@@ -787,7 +828,9 @@ contract PatientIdentity {
         return userData;
     }
 
-    function getPathologist(address _pathologistAddress)
+    function getPathologist(
+        address _pathologistAddress
+    )
         public
         view
         returns (
@@ -806,7 +849,7 @@ contract PatientIdentity {
         )
     {
         Pathologist storage pathologist = pathologists[_pathologistAddress];
-        require(pathologist.isAdded, "Pathologist not found");
+        require(pathologist.isAdded, 'Pathologist not found');
 
         return (
             pathologist.pathologistAddress,
@@ -824,21 +867,17 @@ contract PatientIdentity {
         );
     }
 
-    function getPharmacyCompany(address _pharmacyCompanyAddress)
-        public
-        view
-        returns (PharmacyCompany memory)
-    {
+    function getPharmacyCompany(
+        address _pharmacyCompanyAddress
+    ) public view returns (PharmacyCompany memory) {
         assert(pharmacyCompanies[_pharmacyCompanyAddress].isAdded);
 
         return pharmacyCompanies[_pharmacyCompanyAddress];
     }
 
-    function getMedicalResearchLab(address _labAddress)
-        public
-        view
-        returns (MedicalResearchLab memory)
-    {
+    function getMedicalResearchLab(
+        address _labAddress
+    ) public view returns (MedicalResearchLab memory) {
         assert(medicalResearchLabs[_labAddress].isAdded);
 
         return medicalResearchLabs[_labAddress];

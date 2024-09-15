@@ -49,7 +49,7 @@ const PersonalInfo = () => {
             <View>
               <Card style={{ elevation: 7 }}>
                 <Card.Content>
-                  <Text style={styles.title}>Patient Basic Information</Text>
+                  <Text style={styles.title}>Admin Basic Information</Text>
                   <CustomText label="Account" value={adminData?.data?.[0]} />
 
                   <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
