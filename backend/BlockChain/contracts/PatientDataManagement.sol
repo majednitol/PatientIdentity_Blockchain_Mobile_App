@@ -3,13 +3,12 @@ pragma solidity ^0.8.20;
 import '@openzeppelin/contracts/utils/structs/EnumerableSet.sol';
 
 contract PatientIdentity {
+    using EnumerableSet for EnumerableSet.AddressSet;
     address public ownerAddress;
 
     constructor() {
         ownerAddress = msg.sender;
     }
-
-    using EnumerableSet for EnumerableSet.AddressSet;
     struct commonData {
         bytes32 userType;
         address userAddress;
