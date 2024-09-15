@@ -28,6 +28,7 @@ import TransferData from './src/presentation/Screen/Components/DashBoard/Patient
 import SentTestReportToDoctor from './src/presentation/Screen/Components/DashBoard/Pathologist/SentTestReportToDoctor';
 import store from './src/logic/redux/store';
 import { Provider } from 'react-redux';
+import { StripeProvider } from '@stripe/stripe-react-native';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -39,7 +40,11 @@ export default function App() {
       style={{ flex: 1, backgroundColor: theme.colors.background }}>
      
      <BottomSheetModalProvider>
-     <Provider store={store}>
+        <Provider store={store}>
+        <StripeProvider
+      publishableKey="pk_test_51PsUlqAiNNIfYSMS6ZmmuLEfbgqWFRtfGroVMrqkMs1jYt3e1LLNy5fkSYUnQ8JcdKTFVuMIWg0FfeLQCLSOHzhl00F0Vxv3Hn"
+      merchantIdentifier="merchant.com.yourapp">
+        
         <HealthProvider>
           <NavigationContainer
             theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -102,7 +107,8 @@ export default function App() {
             />
             </Stack.Navigator>
           </NavigationContainer>
-          </HealthProvider>
+            </HealthProvider>
+            </StripeProvider>
           </Provider>
       
     </BottomSheetModalProvider>

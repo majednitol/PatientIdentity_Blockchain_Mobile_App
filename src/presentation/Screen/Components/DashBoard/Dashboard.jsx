@@ -65,6 +65,7 @@ import { fetchPathologistData } from '../../../../logic/redux/pathologist/pathol
 import { ethers } from 'ethers';
 import PersonalInfo from './Admin/PersonalInfo';
 import Useranalytics from './Admin/UserAnalytics';
+import PaymentScreen from '../../payment geteway/PaymentScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -896,6 +897,23 @@ export default function Dashboard() {
           ),
         }}
         component={ImageScanner}
+      />
+      <Drawer.Screen
+        name="Payment"
+        options={{
+          drawerLabel: 'Payment',
+          title: 'Payment',
+          drawerIcon: () => (
+            <Icon
+              source="qrcode-scan"
+              color={scheme === 'light'
+                ? MyTheme.lightColors.text
+                : MyTheme.darkcolors.text}
+              size={20}
+            />
+          ),
+        }}
+        component={PaymentScreen}
       />
 
     </Drawer.Navigator>

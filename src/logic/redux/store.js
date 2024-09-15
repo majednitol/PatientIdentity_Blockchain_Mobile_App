@@ -13,13 +13,14 @@ import pathologistReducer from './pathologist/pathologistSlice';
 // import pathoReducer from './pathologist/pathologistSlice1';
 import pathologistReducher from './pathologist/pathologistSlice1';
 import AdminReducer from './admin/AdminSlice';
+import subscriptionReducer from './subscription/subscription';
 
 export default configureStore({
   reducer: {
 
     patient: patientReducer,
     doctor: doctorReducer,
-    admin:AdminReducer,
+    admin: AdminReducer,
     pathologist: pathologistReducher,
     medicalResearchLab: medicalResearchLabReducer,
     // pathologistData: pathologistReducer,
@@ -28,6 +29,7 @@ export default configureStore({
     connectedUser: connectedUserReducer,
     privateKey: privateKeyReducer,
     web3Auth: web3authReducer,
+    subscription: subscriptionReducer
 
 
   },
