@@ -5,14 +5,26 @@ import { PaymasterMode } from '@biconomy/account';
 import Contract from '../../../data/repository/contract/contractRepo';
 import { ethers } from 'ethers';
 
-export const fetchPatientData = createAsyncThunk('fetchPatientData', async ( saAddress ) => {
+export const fetchPatientData = createAsyncThunk('fetchPatientData', async (saAddress) => {
     try {
         const contract = await Contract.fetchContract()
 
         const patientData = await contract?.getPatient(saAddress);
-        console.log("object",patientData)
+        console.log("object", patientData)
         return patientData.map(item => item.toString());
     } catch (error) {
+        throw error;
+    }
+});
+export const getsharedAllDoctorAddress = createAsyncThunk('getsharedAllDoctorAddress', async () => {
+    try {
+        const contract = await Contract.fetchContract()
+
+        const doctorsAddress = await contract?.getsharedAllDoctorAddress();
+        console.log("doctorsAddress", doctorsAddress)
+        return doctorsAddress.map(item => item.toString());
+    } catch (error) {
+        console.log("error",error)
         throw error;
     }
 });
@@ -40,9 +52,9 @@ export const createPatientAccount = createAsyncThunk(
     'createPatientAccount',
     async ({ patientID, name, gender, age, location, birthday, emailAddress }) => {
         try {
-            
+
             const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
-            
+
             const contract = await Contract.fetchContract()
             console.log(contract)
             const namePadded = ethers.utils.formatBytes32String(name);
@@ -69,34 +81,34 @@ export const createPatientAccount = createAsyncThunk(
             });
             console.log('userOpResponse', userOpResponse);
         } catch (error) {
-            console.log("error",error)
+            console.log("error", error)
             throw error;
-            
+
         }
     }
 );
 
 export const deletePrescription = createAsyncThunk(
     'deletePrescription',
-    async (index,userAddress) => {
+    async (index, userAddress) => {
         try {
-           
+
             const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
             // console.log('098876543234567', saAddress);
-           
-            console.log("userAddress545",userAddress)
+
+            console.log("userAddress545", userAddress)
             const contract = await Contract.fetchContract()
             const tx = await contract.populateTransaction.deletePrecription(index, saAddress)
-      const tx1 = {
-        to: contractAddress,
-        data: tx?.data,
-      };
-      const userOpResponse = await smartWallet?.sendTransaction(tx1, {
-        paymasterServiceData: { mode: PaymasterMode.SPONSORED },
-      });
-      console.log('deletesuccess', userOpResponse)
+            const tx1 = {
+                to: contractAddress,
+                data: tx?.data,
+            };
+            const userOpResponse = await smartWallet?.sendTransaction(tx1, {
+                paymasterServiceData: { mode: PaymasterMode.SPONSORED },
+            });
+            console.log('deletesuccess', userOpResponse)
         } catch (error) {
-            console.log('delete error',error)
+            console.log('delete error', error)
         }
     }
 );
@@ -110,7 +122,7 @@ export const updatePatientHealthData = createAsyncThunk('updatePatientHealthData
     birthDefects }) => {
 
     try {
-      
+
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         console.log('098876543234567', saAddress)
         const contract = await Contract.fetchContract()
@@ -144,7 +156,7 @@ export const shareDataByPatient = createAsyncThunk('shareDataByPatient', async (
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         console.log('098876543234567', saAddress)
         const contract = await Contract.fetchContract()
-        const tx = await contract?.populateTransaction.transferDataByPatient(
+        const tx = await contract?.populateTransaction.shareData(
             scannedAddress
         );
 
@@ -171,7 +183,13 @@ const patientSlice = createSlice({
         error: null,
         success: null,
         deleteLoader: false,
-        updateloading:false
+        updateloading: false,
+        sharedAllDoctorAddress: {
+            data: null,
+            loading: false,
+            error: null,
+            success: null,
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPatientData.pending, (state) => {
@@ -185,6 +203,18 @@ const patientSlice = createSlice({
         builder.addCase(fetchPatientData.rejected, (state, action) => {
             state.loading = false;
             state.error = action.error.message;
+        });
+        builder.addCase(getsharedAllDoctorAddress.pending, (state) => {
+            state.sharedAllDoctorAddress.loading = true;
+            state.sharedAllDoctorAddress.error = null;
+        });
+        builder.addCase(getsharedAllDoctorAddress.fulfilled, (state, action) => {
+            state.sharedAllDoctorAddress.loading = false;
+            state.sharedAllDoctorAddress.data = action.payload;
+        });
+        builder.addCase(getsharedAllDoctorAddress.rejected, (state, action) => {
+            state.sharedAllDoctorAddress.loading = false;
+            state.sharedAllDoctorAddress.error = action.error.message;
         });
 
         // personal doctor

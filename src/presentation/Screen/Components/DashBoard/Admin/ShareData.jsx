@@ -1,33 +1,31 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { View, TouchableOpacity, StyleSheet, Alert, Dimensions, Image } from 'react-native';
-import { ActivityIndicator, Button, TextInput, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Text } from 'react-native-paper';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { HealthContext } from '../../../../../logic/context/health';
 import { useNavigation } from '@react-navigation/native';
-import { shareDataByPatient } from '../../../../../logic/redux/patient/PatientSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getScanedAddress, setScanAddress } from '../../../../../logic/redux/scanner/scanAddressSlice';
+import { shareDataByAdmin } from '../../../../../logic/redux/admin/AdminSlice';
 
 const { width, height } = Dimensions.get('window');
 
-const TransferData = () => {
-  const { } = useContext(HealthContext);
+const ShareData = () => {
+  const {   } = useContext(HealthContext);
   const navigation = useNavigation();
 
   const goToScannerScreen = () => {
     navigation.navigate('AddressScanner');
   };
   const dispatch = useDispatch();
-  const { loading: isShareLoading, error: accountCreationError } = useSelector((state) => state.patient);
+  const { sharedDataByAdmin } = useSelector((state) => state.admin);
   const scannedAddress = useSelector(getScanedAddress);
   const shareData = async () => {
-    console.log("scannedAddress", scannedAddress)
+    console.log("scannedAddress",scannedAddress)
     try {
       const isValidAddress = /^0x[a-fA-F0-9]{40}$/;
       if (isValidAddress.test(scannedAddress)) {
-        dispatch(shareDataByPatient({ scannedAddress })).then(() => {
-          Alert.alert("Prescription shared successfully", "You can now view it on the patient's dashboard.");
-        });
+        dispatch(shareDataByAdmin({scannedAddress}));
         setScanAddress('');
       } else {
         Alert.alert("Invalid Address', 'Please scan a valid address.")
@@ -45,7 +43,7 @@ const TransferData = () => {
     }}>
       <View style={styles.container}>
         <Text style={{ marginBottom: 10 }}>{scannedAddress}</Text>
-        {console.log("scannedAddress", scannedAddress)}
+        {console.log("scannedAddress",scannedAddress)}
         <TouchableOpacity onPress={goToScannerScreen}>
           <Image
             source={require('../../../../../../assets/qr.jpg')}
@@ -53,11 +51,10 @@ const TransferData = () => {
           />
         </TouchableOpacity>
 
-
-
-        <TouchableOpacity onPress={shareData} style={styles.button2}>
-          {isShareLoading ? <ActivityIndicator color="white" /> : <Text style={{ color: 'white', fontWeight: 'bold' }}> Share Prescription </Text>}
-        </TouchableOpacity>
+        <Button onPress={shareData} mode="contained" textColor="white" style={styles.shareButton}>
+          {sharedDataByAdmin.loading ? <ActivityIndicator color="white"  />  : <Text style={styles.buttonText}>Share Prescription</Text>}
+        </Button>
+        {/* {isShareLoading === true ? <ActivityIndicator color="white" style={styles.activityIndicator} /> : null} */}
       </View>
     </Animated.View>
   );
@@ -72,7 +69,7 @@ const styles = StyleSheet.create({
   scanButtonText: {
     color: 'white',
     fontSize: width * 0.05,
-    marginBottom: 20
+    marginBottom:20
   },
   shareButton: {
     marginTop: height * 0.03,
@@ -86,16 +83,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     top: -height * 0.04,
   },
-  button2: {
-    backgroundColor: 'rgb(108, 99, 255)',
-    height: height * 0.05, // 20% of window height
-    width: width * 0.8, // 80% of window width
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 10, marginTop: 60,
-    borderRadius: 10,
-
-  }
 });
 
-export default TransferData;
+export default ShareData;

@@ -14,7 +14,7 @@ import SplashScreen from './src/presentation/Screen/Splash Screen/SplashScreen';
 import HomeScreen from './src/presentation/Screen/HomeScreen';
 import NotConnected from './src/presentation/Screen/NotConnected';
 import PrimaryScreen from './src/presentation/Screen/signup/PrimaryScreen';
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import HealthProvider from './src/logic/context/health';
 
 
@@ -29,90 +29,96 @@ import SentTestReportToDoctor from './src/presentation/Screen/Components/DashBoa
 import store from './src/logic/redux/store';
 import { Provider } from 'react-redux';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import PaymentScreen from './src/presentation/Screen/payment geteway/PaymentScreen';
 const Stack = createStackNavigator();
 
 export default function App() {
   const scheme = useColorScheme();
   const theme = useTheme();
-  
+
   return (
     <GestureHandlerRootView
       style={{ flex: 1, backgroundColor: theme.colors.background }}>
-     
-     <BottomSheetModalProvider>
-        <Provider store={store}>
-        <StripeProvider
-      publishableKey="pk_test_51PsUlqAiNNIfYSMS6ZmmuLEfbgqWFRtfGroVMrqkMs1jYt3e1LLNy5fkSYUnQ8JcdKTFVuMIWg0FfeLQCLSOHzhl00F0Vxv3Hn"
-      merchantIdentifier="merchant.com.yourapp">
-        
-        <HealthProvider>
-          <NavigationContainer
-            theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack.Navigator initialRouteName="Splash">
-              <Stack.Screen
-                name="Splash"
-                component={SplashScreen}
-                options={{ headerShown: false }}
-              />
 
-              <Stack.Screen
-                name="HomeScreen"
-                component={HomeScreen}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="NotConnected"
-                component={NotConnected}
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen
-                name="SignUp"
-                component={PrimaryScreen}
-                options={{ headerShown: false }}
-            />
-             <Stack.Screen
-                name="AddressScanner"
-                component={ScannerScreen}
-                options={{ headerShown: true }}
-            />
-            <Stack.Screen
-                name="ImageScanner"
-                component={ImageScanner}
-                options={{ headerShown: true }}
-            />
-              <Stack.Screen
-                name="Dashboard"
-                component={Dashboard}
-                options={{ headerShown: false }}
-            />
-             <Stack.Screen
-                name="DisplayFile"
-                component={DisplayFile}
-                options={{ headerShown: true }}
-              />
-              <Stack.Screen
-                name="Sent Prescription"
-                component={SentPrescription}
-                options={{ headerShown: true }}
-              />
-              <Stack.Screen
-                name="Share Prescription"
-                component={TransferData}
-                options={{ headerShown: true }}
-              />
-              <Stack.Screen
-                name="Sent Test Report"
-                component={SentTestReportToDoctor}
-                options={{ headerShown: true }}
-            />
-            </Stack.Navigator>
-          </NavigationContainer>
+      <BottomSheetModalProvider>
+        <Provider store={store}>
+          <StripeProvider
+            publishableKey="pk_test_51PsUlqAiNNIfYSMS6ZmmuLEfbgqWFRtfGroVMrqkMs1jYt3e1LLNy5fkSYUnQ8JcdKTFVuMIWg0FfeLQCLSOHzhl00F0Vxv3Hn"
+            merchantIdentifier="merchant.com.yourapp">
+
+            <HealthProvider>
+              <NavigationContainer
+                theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
+                <Stack.Navigator initialRouteName="Splash">
+                  <Stack.Screen
+                    name="Splash"
+                    component={SplashScreen}
+                    options={{ headerShown: false }}
+                  />
+
+                  <Stack.Screen
+                    name="HomeScreen"
+                    component={HomeScreen}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="NotConnected"
+                    component={NotConnected}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="SignUp"
+                    component={PrimaryScreen}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="AddressScanner"
+                    component={ScannerScreen}
+                    options={{ headerShown: true }}
+                  />
+                  <Stack.Screen
+                    name="ImageScanner"
+                    component={ImageScanner}
+                    options={{ headerShown: true }}
+                  />
+                  <Stack.Screen
+                    name="Dashboard"
+                    component={Dashboard}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="DisplayFile"
+                    component={DisplayFile}
+                    options={{ headerShown: true }}
+                  />
+                  <Stack.Screen
+                    name="Sent Prescription"
+                    component={SentPrescription}
+                    options={{ headerShown: true }}
+                  />
+                  <Stack.Screen
+                    name="Share Prescription"
+                    component={TransferData}
+                    options={{ headerShown: true }}
+                  />
+                  <Stack.Screen
+                    name="Sent Test Report"
+                    component={SentTestReportToDoctor}
+                    options={{ headerShown: true }}
+                  />
+                  <Stack.Screen
+                    name="Payment"
+                    component={PaymentScreen}
+                    options={{ headerShown: true }}
+                  />
+                </Stack.Navigator>
+              </NavigationContainer>
             </HealthProvider>
-            </StripeProvider>
-          </Provider>
-      
-    </BottomSheetModalProvider>
-    
+          </StripeProvider>
+        </Provider>
+
+      </BottomSheetModalProvider>
+
     </GestureHandlerRootView>
   );
 }

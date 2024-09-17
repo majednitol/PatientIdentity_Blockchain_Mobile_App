@@ -41,7 +41,7 @@ import { ScannerScreen } from '../../../../scanner/qrcode scanner/ScannerScreen'
 import OwnQRCode from '../File/OwnQRCode';
 import { ScrollView } from 'react-native';
 import ImageScanner from '../../../../scanner/image scanner/ImageScanner';
-import SharedDataAllUserInfo from './Patient/SharedDataAllUserInfo';
+import SharedDataAllUserInfo from './Admin/SharedDataAllUserInfo';
 import FileUpload from '../File/FileUpload';
 import PathologistList from './Doctor/DoctorToPathologist';
 import DoctorList from './Pathologist/DoctorList';
@@ -66,6 +66,11 @@ import { ethers } from 'ethers';
 import PersonalInfo from './Admin/PersonalInfo';
 import Useranalytics from './Admin/UserAnalytics';
 import PaymentScreen from '../../payment geteway/PaymentScreen';
+import SubscriptionInfo from './../../payment geteway/SubscriptionInfo';
+import ShareData from './Admin/ShareData';
+import AdminPrescription from './Admin/Prescription';
+import { fetchAdminData } from '../../../../logic/redux/admin/AdminSlice';
+import SharedDataAllDoctorsInfo from './Patient/SharedDataAllDoctorInfo';
 
 const Drawer = createDrawerNavigator();
 
@@ -112,6 +117,7 @@ export default function Dashboard() {
   const dispatch = useDispatch();
 
   const { patientData, loading, error } = useSelector((state) => state.patient);
+  
   const { pathologistData } = useSelector((state) => state.pathologist);
   const { connectedUserType, } = useSelector((state) => state.connectedUser);
   const [address, setAddress] = useState('')
@@ -131,6 +137,8 @@ export default function Dashboard() {
       dispatch(fetchMedicalResearchLabData(saAddress))
     } else if (String(connectedUserType) === '5') {
       dispatch(fetchPatientData(saAddress));
+    }else if (String(connectedUserType) === '6') {
+      dispatch(fetchAdminData(saAddress));
     }
 
 
@@ -257,7 +265,7 @@ export default function Dashboard() {
                             ? medicalResearchLabData?.[8] ? ethers.utils.parseBytes32String(medicalResearchLabData?.[8]) : null
                             : String(connectedUserType) === '5'
                               ? patientData?.[7] ? ethers.utils.parseBytes32String(patientData?.[7]) : null : String(connectedUserType) === '6'
-                              ? adminData?.data?.[7] ? ethers.utils.parseBytes32String(adminData?.data?.[7]) : null : null}
+                                ? adminData?.data?.[7] ? ethers.utils.parseBytes32String(adminData?.data?.[7]) : null : null}
                 </Text>
                 <View
                   style={{
@@ -436,6 +444,23 @@ export default function Dashboard() {
             }}
             component={PatientPersonalDoctors}
           />
+          <Drawer.Screen
+            name="Shared Data To Users List"
+            options={{
+              drawerLabel: 'Shared Data To Doctors List ',
+              title: 'Shared Data To Doctors List ',
+              drawerIcon: () => (
+                <Icon
+                  source="account-group"
+                  color={scheme === 'light'
+                    ? MyTheme.lightColors.text
+                    : MyTheme.darkcolors.text}
+                  size={20}
+                />
+              ),
+            }}
+            component={SharedDataAllDoctorsInfo}
+          />
 
           {/* <Drawer.Screen
             name="patient"
@@ -454,23 +479,6 @@ export default function Dashboard() {
             }}
             component={PatientView}
           /> */}
-          <Drawer.Screen
-            name="Shared Data To Users List"
-            options={{
-              drawerLabel: 'Shared Data To Users List ',
-              title: 'Shared Data To Users List ',
-              drawerIcon: () => (
-                <Icon
-                  source="account-group"
-                  color={scheme === 'light'
-                    ? MyTheme.lightColors.text
-                    : MyTheme.darkcolors.text}
-                  size={20}
-                />
-              ),
-            }}
-            component={SharedDataAllUserInfo}
-          />
         </>
       )}
       {connectedUserType == '6' && (
@@ -509,8 +517,57 @@ export default function Dashboard() {
             }}
             component={Useranalytics}
           />
-
-
+          <Drawer.Screen
+            name="Shared Data To Users List"
+            options={{
+              drawerLabel: 'Shared Data To Users List ',
+              title: 'Shared Data To Users List ',
+              drawerIcon: () => (
+                <Icon
+                  source="account-group"
+                  color={scheme === 'light'
+                    ? MyTheme.lightColors.text
+                    : MyTheme.darkcolors.text}
+                  size={20}
+                />
+              ),
+            }}
+            component={SharedDataAllUserInfo}
+          />
+          <Drawer.Screen
+            name="Prescription"
+            options={{
+              drawerLabel: 'Prescription',
+              title: 'Prescription',
+              drawerIcon: () => (
+                <Icon
+                  source="prescription"
+                  color={scheme === 'light'
+                    ? MyTheme.lightColors.text
+                    : MyTheme.darkcolors.text}
+                  size={20}
+                />
+              ),
+            }}
+            component={AdminPrescription}
+          />
+          <Drawer.Screen
+            name="Share data"
+            options={{
+              drawerLabel: 'Share data',
+              title: 'Share data',
+              drawerIcon: () => (
+                <Icon
+                  source="share-all"
+                  color={scheme === 'light'
+                    ? MyTheme.lightColors.text
+                    : MyTheme.darkcolors.text}
+                  size={20}
+                />
+              ),
+            }}
+            component={ShareData}
+          />
         </>
       )}
       {/* Doctor */}
@@ -898,11 +955,14 @@ export default function Dashboard() {
         }}
         component={ImageScanner}
       />
+
+
+
       <Drawer.Screen
-        name="Payment"
+        name="Subscription Status"
         options={{
-          drawerLabel: 'Payment',
-          title: 'Payment',
+          drawerLabel: 'Subscription Status',
+          title: 'Subscription Status',
           drawerIcon: () => (
             <Icon
               source="qrcode-scan"
@@ -913,9 +973,8 @@ export default function Dashboard() {
             />
           ),
         }}
-        component={PaymentScreen}
+        component={SubscriptionInfo}
       />
-
     </Drawer.Navigator>
   );
 }

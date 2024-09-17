@@ -9,6 +9,7 @@ contract PatientIdentity {
     constructor() {
         ownerAddress = msg.sender;
     }
+
     struct commonData {
         bytes32 userType;
         address userAddress;
@@ -189,7 +190,7 @@ contract PatientIdentity {
         string profilePic;
         bytes32 emailAddress;
     }
-    // EnumerableSet.AddressSet adminToPharmacy;
+   
     mapping(address => EnumerableSet.AddressSet) private adminToPharmacy;
 
     function getPatientToPharmacy() public view returns (address[] memory) {
@@ -197,7 +198,7 @@ contract PatientIdentity {
     }
 
     struct subscriptionTX {
-        string[] transactions; // Stores a list of subscription transactions
+        string[] transactions; 
     }
 
     // Mapping to store expiration time for data

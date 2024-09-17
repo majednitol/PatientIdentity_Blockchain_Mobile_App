@@ -19,7 +19,9 @@ const SetAdmin = () => {
     const navigation = useNavigation();
     const [name, setName] = useState('');
     const [gender, setGender] = useState('');
-
+    const [age, setAge] = useState('');
+    const [location, setLocation] = useState('');
+    const [inputDate, setInputDate] = useState('');
     const [errors, setErrors] = useState({});
     const [call, setCall] = useState(false);
     const getUser = useMemo(() => async () => {
@@ -68,16 +70,23 @@ const SetAdmin = () => {
     const handleSubmit = async () => {
         if (
             name.trim() !== '' &&
-            gender.trim() !== ''
+            gender.trim() !== '' &&
+            age.trim() !== '' &&
+            inputDate.trim() !== '' &&
+            location.trim() !== '' 
         ) {
             console.log('Form submitted');
-
+            const birthday = inputDate.toString().slice(0, 15);
 
             dispatch(
                 createAdminAccount({
                     adminID,
                     name,
-                    gender
+                    gender,
+                    birthday,
+                    emailAddress,
+                    age,
+                    location
                 })
             ).then(() => {
                 Alert.alert('SuccessFully created Account')
@@ -92,7 +101,11 @@ const SetAdmin = () => {
             console.log('Please fill up all fields');
             setErrors({
                 name: name.trim() === '',
-                gender: gender.trim() === ''
+                gender: gender.trim() === '',
+                inputDate: inputDate.trim() === '',
+                age: age.trim() === '',
+                location: location.trim() === '',
+
             });
         }
     };
@@ -120,12 +133,38 @@ const SetAdmin = () => {
                     label="Enter your gender"
                 />
                 {errors.gender && <Text style={{ color: 'red' }}>Field required</Text>}
+                <TextInput
+                    style={{ marginVertical: 10 }}
+                    mode="outlined"
+                    keyboardType="numeric"
+                    value={age}
+                    error={errors.age}
+                    onChangeText={value => handleInputChange('age', value)}
+                    label="Enter your age"
+                />{errors.age && <Text style={{ color: 'red' }}>Field required</Text>}
+                <TextInput
+                    style={{ marginVertical: 10 }}
+                    mode="outlined"
+                    keyboardType="default"
+                    value={location}
+                    error={errors.location}
+                    onChangeText={value => handleInputChange('location', value)}
+                    label="Enter your location"
+                />
+                {errors.location && <Text style={{ color: 'red' }}>Field required</Text>}
+
+                <DatePickerInput
+          style={{ marginVertical: 10 }}
+          label="Birthdate"
+          locale="en"
+          value={inputDate}
+          onChange={(d) => setInputDate(d)}
+          inputMode="start"
+        />
+        {errors.inputDate ? Alert.alert('Please enter your birthdate') : console.log(inputDate.toString().slice(0, 15))}
                 <TouchableOpacity onPress={handleSubmit} style={styles.button}>
                     {accountCreation.loading ? <ActivityIndicator color="white" /> : <Text style={{ color: 'white', fontWeight: 'bold' }}>Submit</Text>}
                 </TouchableOpacity>
-                {/* {accountCreationLoader === true ? (
-          <ActivityIndicator color="white" style={{ position: 'relative', top: height * (-0.077) }} />
-        ) : null} */}
             </ScrollView>
         </ScrollView>
     );

@@ -15,6 +15,7 @@ import { BiconomySmartAccountV2, PaymasterMode, createSmartAccountClient } from 
 import { contractAddress } from "../../service/constant";
 import { useNavigation } from "@react-navigation/native";
 import Dashboard from './../../presentation/Screen/Components/DashBoard/Dashboard';
+import SmartAccount from "../../service/wallet connect/SmartAccount";
 const { v4: uuidv4 } = require('uuid');
 export const HealthContext = React.createContext();
 const HealthProvider = ({ children }) => {
@@ -67,6 +68,7 @@ const HealthProvider = ({ children }) => {
     []
   );
   const [sharedAllUsersAddress, setSharedAllUsersAddress] = useState([]);
+  const [sharedAllDoctorsAddress, setSharedAllDoctorsAddress] = useState([]);
   const [personalDoctor, setPersonalDoctor] = useState([]);
   const [doctorReportFromPatho, setDoctorReportFromPatho] = useState()
   const [prescriptionFromDoctor, setPrescriptionFromDoctor] = useState()
@@ -297,7 +299,8 @@ const HealthProvider = ({ children }) => {
   const getAlluserData = async (address) => {
 
     try {
-
+      const contract = await Contract.fetchContract()
+      console.log(contract)
       const alluserData = await contract.getAlluserTypeData(address)
       setAllUserTypeData(alluserData);
       return alluserData;
@@ -309,7 +312,7 @@ const HealthProvider = ({ children }) => {
   const getAllusersData = async () => {
 
     try {
-
+      const contract = await Contract.fetchContract();
       const alluserAddress = await contract.allUserData()
       setAllUserTypeAddress(alluserAddress);
       console.log("alluserAddress", alluserAddress)
@@ -626,19 +629,21 @@ const HealthProvider = ({ children }) => {
   const revokeAccess = async (index, smartAccount) => {
     try {
       setDeleteloader(true)
+      const contract = await Contract.fetchContract()
+      const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
       const tx = await contract.populateTransaction.revokeAccessData(index)
       const tx1 = {
         to: contractAddress,
         data: tx?.data,
       };
-      const userOpResponse = await smartAccount?.sendTransaction(tx1, {
+      const userOpResponse = await smartWallet?.sendTransaction(tx1, {
         paymasterServiceData: { mode: PaymasterMode.SPONSORED },
       });
       console.log('userOpResponse', userOpResponse)
       Alert.alert("Successfully Revoked Access")
       setDeleteloader(true)
 
-      console.log('success', res)
+  
       forceUpdate()
 
     } catch (error) {
@@ -668,12 +673,14 @@ const HealthProvider = ({ children }) => {
   };
 
   const getsharedAllUsersAddress = async () => {
+    const contract = await Contract.fetchContract();
     const sharedAllUsersAddress = await contract.getsharedAllUsersAddress();
     console.log('success', sharedAllUsersAddress)
     setSharedAllUsersAddress(sharedAllUsersAddress)
     forceUpdate()
 
   };
+ 
 
   const getPersonalDoctor = async () => {
     const personalDoctor = await contract.getPersonalDoctor();
@@ -918,7 +925,7 @@ const HealthProvider = ({ children }) => {
         PatientToMedRcLabSharedData,
         PatientToPharmacySharedData,
         getPatientAllPrescription, privateKey, setPrivateKey, isContractLoading, setIsContractLoading, isLoading, address, connectedAccountBalance, ispatientLoading, getPatientForDoctor, getPathologistForDoctor, scanAddress, setScanAddress, isShareLoading, screen, setScreen, deletePrescription, deleteloader, revokeAccess, timeStamp, getCurrentNotificationCreationTime, reducerValue, forceUpdate, accountCreationLoader, setAccountCreationLoader,
-        btnclick, emailAddress, setEmailAddress, contract, imagesUrl, setImagesUrl, pathologistDoctorList, doctorPathoList, getPathologistDataFromDoctor, getDoctorDataFromPathologist, doctorReportFromPatho, prescriptionFromDoctor, getDoctorAllOtherData, getPatientDataFromDoctor, doctorAnotherData, isDbVisiable, setIsDbVisiable, anotherUser, setAnotherUser, isUserCardShowTo, setIsUserCardShowTo, isUserCardShowFrom, setIsUserCardShowFrom, getAllusersData, allUserTypeAddress, setAllUserTypeAddress, searchUser, searchedUsers, setSearchUsers, sharedAllUsersAddress, getsharedAllUsersAddress, personalDoctor, getPersonalDoctor, patientToParmacyCompany, patientToMedicalRLab, getPatientToMedRcLab, getPatientToPharmacy, connectedAccount, smartAccountAddress, setSmartAccountAddress, setSmartAccount, smartAccount,setConnectedAccountUser,login,isLoggedIn,web3Auth, setWeb3Auth,downloadProgress, setDownloadProgress,userAddress,setUserAddress
+        btnclick, emailAddress, setEmailAddress, contract, imagesUrl, setImagesUrl, pathologistDoctorList, doctorPathoList, getPathologistDataFromDoctor, getDoctorDataFromPathologist, doctorReportFromPatho, prescriptionFromDoctor, getDoctorAllOtherData, getPatientDataFromDoctor, doctorAnotherData, isDbVisiable, setIsDbVisiable, anotherUser, setAnotherUser, isUserCardShowTo, setIsUserCardShowTo, isUserCardShowFrom, setIsUserCardShowFrom, getAllusersData, allUserTypeAddress, setAllUserTypeAddress, searchUser, searchedUsers, setSearchUsers, sharedAllUsersAddress, getsharedAllUsersAddress, personalDoctor, getPersonalDoctor, patientToParmacyCompany, patientToMedicalRLab, getPatientToMedRcLab, getPatientToPharmacy, connectedAccount, smartAccountAddress, setSmartAccountAddress, setSmartAccount, smartAccount,setConnectedAccountUser,login,isLoggedIn,web3Auth, setWeb3Auth,downloadProgress, setDownloadProgress,userAddress,setUserAddress,
 
       }}>
       {children}

@@ -5,33 +5,41 @@ import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-pa
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { HealthContext } from '../../../../../logic/context/health';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdminData } from '../../../../../logic/redux/admin/AdminSlice';
 
 const SharedDataAllUserInfo = () => {
     const theme = useTheme();
-    const { patientData, isLoading, getPatientAllData, reducerValue,sharedAllUsersAddress,getsharedAllUsersAddress } = useContext(HealthContext);
+    const { isLoading, reducerValue, sharedAllUsersAddress, getsharedAllUsersAddress } = useContext(HealthContext);
+    const { adminData } = useSelector((state) => state.admin);
     const [SharedDataAllUserAddress, setSharedDataAllUserAddress] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-
+    const dispatch = useDispatch();
+    const fetchData = async () => {
+      const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+      console.log('saAddress7777', saAddress);
+      dispatch(fetchAdminData(saAddress))
+    };
     const onRefresh = () => {
         setRefreshing(true);
-        getPatientAllData();
+        fetchData();
         getsharedAllUsersAddress()
 
         setRefreshing(false);
     };
     useEffect(() => {
-        getPatientAllData();
+        fetchData();
         getsharedAllUsersAddress()
-        patientData
+        adminData?.data
     }, [reducerValue])
     useEffect(() => {
-        if (!isLoading && Array.isArray(patientData)) {
+        if (!isLoading && Array.isArray(adminData?.data)) {
             const alluserAddress = sharedAllUsersAddress;
             setSharedDataAllUserAddress(alluserAddress || []);
             
 
         }
-    }, [patientData, isLoading]);
+    }, [adminData?.data, isLoading]);
 
     return (
         <View style={styles.container}>
@@ -64,7 +72,7 @@ const SharedDataAllUserInfo = () => {
     );
 };
 
-const AllUserCard = ({ userAddress, index, data }) => {
+const AllUserCard = ({ userAddress }) => {
     const { isLoading, getAlluserData, revokeAccess } = useContext(HealthContext);
     const [userData, setUserData] = useState(null);
 

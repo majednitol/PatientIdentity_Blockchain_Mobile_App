@@ -22,7 +22,7 @@ export const getSubscriptionTransactions = createAsyncThunk('getSubscriptionTran
 export const getSubscriptionStatus = createAsyncThunk('getSubscriptionStatus', async () => {
   try {
     const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
-    const SubscriptionStatus = await contract?.getSubscriptionTransactions(saAddress);
+    const SubscriptionStatus = await contract?.getSubscriptionStatus(saAddress);
     return SubscriptionStatus.map(item => item.toString());
   } catch (error) {
     console.log("error getSTs", error)
@@ -33,9 +33,10 @@ export const getSubscriptionStatus = createAsyncThunk('getSubscriptionStatus', a
 export const addSubscription = createAsyncThunk('addSubscription', async ({ transaction }) => {
 
   try {
+    console.log("transaction",transaction)
     const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
     const contract = await Contract.fetchContract();
-    const tx = await contract?.subscription(transaction);
+    const tx = await contract?.populateTransaction.subscription(transaction);
 
     const tx1 = {
       to: contractAddress,
@@ -46,6 +47,7 @@ export const addSubscription = createAsyncThunk('addSubscription', async ({ tran
     });
     console.log('userOpResponse', userOpResponse);
   } catch (error) {
+    console.log(error)
     throw error;
   }
 });

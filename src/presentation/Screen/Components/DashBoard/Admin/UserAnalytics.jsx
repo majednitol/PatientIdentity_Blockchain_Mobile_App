@@ -106,7 +106,7 @@ const Useranalytics = () => {
                                 />
                                 <Text style={[styles.chartLabel, { color: ttextColor }]}>Number of Premium Subscriptions</Text>
 
-                            
+
                                 {selectedBar && (
                                     <Tooltip
                                         isVisible={tooltipVisible}
