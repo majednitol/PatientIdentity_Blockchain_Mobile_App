@@ -4,7 +4,7 @@ import SmartAccount from '../../../service/wallet connect/SmartAccount';
 import { PaymasterMode } from '@biconomy/account';
 import Contract from '../../../data/repository/contract/contractRepo';
 import {ethers} from 'ethers'
-export const fetchPathologistData = createAsyncThunk('fetchPathologistDat', async (saAddress) => {
+export const fetchPathologistData = createAsyncThunk('fetchPathologistData', async (saAddress) => {
     try {
         
         const contract = await Contract.fetchContract();
@@ -15,6 +15,7 @@ export const fetchPathologistData = createAsyncThunk('fetchPathologistDat', asyn
         console.log(error)
     }
 });
+
 export const fetchPathologistDataFromDoctor = createAsyncThunk('fetchPathologistDataFromDoctor', async (doctorAddress) => {
     try {
         const contract = await Contract.fetchContract()

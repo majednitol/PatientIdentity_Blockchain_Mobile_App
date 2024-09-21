@@ -25,7 +25,8 @@ const ShareData = () => {
     try {
       const isValidAddress = /^0x[a-fA-F0-9]{40}$/;
       if (isValidAddress.test(scannedAddress)) {
-        dispatch(shareDataByAdmin({scannedAddress}));
+        dispatch(shareDataByAdmin({scannedAddress})).then(() => {
+          Alert.alert("Prescription shared successfully")});
         setScanAddress('');
       } else {
         Alert.alert("Invalid Address', 'Please scan a valid address.")
@@ -54,7 +55,6 @@ const ShareData = () => {
         <Button onPress={shareData} mode="contained" textColor="white" style={styles.shareButton}>
           {sharedDataByAdmin.loading ? <ActivityIndicator color="white"  />  : <Text style={styles.buttonText}>Share Prescription</Text>}
         </Button>
-        {/* {isShareLoading === true ? <ActivityIndicator color="white" style={styles.activityIndicator} /> : null} */}
       </View>
     </Animated.View>
   );

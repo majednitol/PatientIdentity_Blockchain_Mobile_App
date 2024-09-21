@@ -96,7 +96,7 @@ const HealthProvider = ({ children }) => {
     providerUrl: "https://data-seed-prebsc-1-s1.bnbchain.org:8545",
 
     biconomyPaymasterApiKey:
-      "lP2V-CoVx.a52796e8-95a8-437d-8726-f90cfcdad483",
+      "eVribMuLw.6d9e6709-5dd7-45d3-8b24-026b3ff2f339",
     explorerUrl: "https://cardona-zkevm.polygonscan.com",
   }
   const config = {

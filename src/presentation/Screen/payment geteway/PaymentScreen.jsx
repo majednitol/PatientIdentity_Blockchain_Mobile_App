@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 import { addSubscription } from '../../../logic/redux/subscription/subscription';
 import { useDispatch, useSelector } from 'react-redux';
 
-const API_URL = 'http://192.168.174.59:3000';
+const API_URL = 'https://stripe-qzx2.onrender.com';
 
 function PaymentScreen() {
   const { confirmPayment } = useStripe();

@@ -16,12 +16,23 @@ export const fetchAdminData = createAsyncThunk('fetchAdminData', async (saAddres
         throw error;
     }
 });
+export const getsharedAllUsersAddress = createAsyncThunk('getsharedAllUsersAddress', async (saAddress) => {
+    try {
+        const contract = await Contract.fetchContract()
+
+        const sharedAllUsers = await contract?.getsharedAllUsersAddress();
+console.log('getsharedAllUsers',sharedAllUsers)
+        return sharedAllUsers.map(item => item.toString());
+    } catch (error) {
+        throw error;
+    }
+});
 export const shareDataByAdmin = createAsyncThunk('shareDataByAdmin', async ({ scannedAddress }) => {
 
     try {
-        console.log('address', scannedAddress)
+        console.log('scannedAddressadmin', scannedAddress)
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
-        console.log('098876543234567', saAddress)
+       
         const contract = await Contract.fetchContract()
         const tx = await contract?.populateTransaction.shareData(
             scannedAddress
@@ -83,6 +94,7 @@ export const createAdminAccount = createAsyncThunk(
             });
             console.log('userOpResponse', userOpResponse);
         } catch (error) {
+            console.log("error",error)
             throw error;
         }
     }
@@ -110,10 +122,27 @@ const adminSlice = createSlice({
             loading: false,
             error: null,
             success: null
+        },
+        sharedAllUsers: {
+            data: null, loading: false,
+            error: null,
+            success: null,
         }
 
     },
     extraReducers: (builder) => {
+        builder.addCase(getsharedAllUsersAddress.pending, (state) => {
+            state.sharedAllUsers.loading = true;
+            state.sharedAllUsers.error = null;
+        });
+        builder.addCase(getsharedAllUsersAddress.fulfilled, (state, action) => {
+            state.sharedAllUsers.loading = false;
+            state.sharedAllUsers.data = action.payload;
+        });
+        builder.addCase(getsharedAllUsersAddress.rejected, (state, action) => {
+            state.sharedAllUsers.loading = false;
+            state.sharedAllUsers.error = action.error.message;
+        });
         builder.addCase(fetchAdminData.pending, (state) => {
             state.adminData.loading = true;
             state.adminData.error = null;
@@ -126,7 +155,6 @@ const adminSlice = createSlice({
             state.adminData.loading = false;
             state.adminData.error = action.error.message;
         });
-
 
         // addPatient
         builder.addCase(createAdminAccount.pending, (state) => {

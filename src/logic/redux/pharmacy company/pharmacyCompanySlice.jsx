@@ -19,6 +19,18 @@ export const fetchPharmacyCompanyData = createAsyncThunk('fetchPharmacyCompanyDa
     throw error;
   }
 });
+export const getAdminToPharmacyData = createAsyncThunk('getAdminToPharmacyData', async () => {
+  try {
+      const contract = await Contract.fetchContract()
+      const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+      const adminAddress = await contract?.getAdminToPharmacy(saAddress);
+      console.log("adminAddress", adminAddress)
+      return adminAddress.map(item => item.toString());
+  } catch (error) {
+      console.log("error",error)
+      throw error;
+  }
+});
 
 export const createPharmacyCompanyAccount = createAsyncThunk('createPharmacyCompanyAccount', async ({ companyID,
   name,
@@ -77,7 +89,13 @@ const pharmacyCompanySlice = createSlice({
         pharmacyCompanyData: null,
         loading: false,
         error: null,
-        success:null
+      success: null,
+      AdminToPharmacy: {
+        loading: false,
+        error: null,
+        success: null,
+        data: null,
+      }
     },
     extraReducers: (builder) => {
         builder.addCase(fetchPharmacyCompanyData.pending, (state) => {
@@ -92,6 +110,18 @@ const pharmacyCompanySlice = createSlice({
                 state.loading = false;
                 state.error = action.error.message;
             });
+            builder.addCase(getAdminToPharmacyData.pending, (state) => {
+              state.AdminToPharmacy.loading = true;
+              state.AdminToPharmacy.error = null;
+          });
+              builder.addCase(getAdminToPharmacyData.fulfilled, (state, action) => {
+                  state.AdminToPharmacy.loading = false;
+                  state.AdminToPharmacy.data = action.payload;
+              });
+              builder.addCase(getAdminToPharmacyData.rejected, (state, action) => {
+                  state.AdminToPharmacy.loading = false;
+                  state.AdminToPharmacy.error = action.error.message;
+              });
             builder.addCase(createPharmacyCompanyAccount.pending, (state) => {
                 state.loading = true;
                 state.error = null;

@@ -19,8 +19,8 @@ export const fetchPatientData = createAsyncThunk('fetchPatientData', async (saAd
 export const getsharedAllDoctorAddress = createAsyncThunk('getsharedAllDoctorAddress', async () => {
     try {
         const contract = await Contract.fetchContract()
-
-        const doctorsAddress = await contract?.getsharedAllDoctorAddress();
+        const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+        const doctorsAddress = await contract?.getsharedAllDoctorAddress(saAddress);
         console.log("doctorsAddress", doctorsAddress)
         return doctorsAddress.map(item => item.toString());
     } catch (error) {
@@ -31,9 +31,12 @@ export const getsharedAllDoctorAddress = createAsyncThunk('getsharedAllDoctorAdd
 export const getPersonalDoctor = createAsyncThunk('getPersonalDoctor', async () => {
     try {
         const contract = await Contract.fetchContract()
-        const personalDoctor = await contract.getPersonalDoctor();
+        const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+        const personalDoctor = await contract.getPersonalDoctor(saAddress);
+        console.log("personalDoctor",personalDoctor)
         return personalDoctor.map(item => item.toString());
     } catch (error) {
+        console.log(error)
         throw error;
     }
 });

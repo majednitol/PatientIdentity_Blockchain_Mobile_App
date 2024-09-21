@@ -21,6 +21,7 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
 
   useEffect(() => {
     dispatch(getPersonalDoctor());
+    console.log("personalDoctor",personalDoctor)
   }, [dispatch]);
 
   useEffect(() => {

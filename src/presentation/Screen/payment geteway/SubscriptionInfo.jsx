@@ -53,7 +53,7 @@ function SubscriptionInfo() {
 
                 <Card style={styles.card}>
                     <Card.Content>
-                        <Text style={styles.label}>Subscription Remaining Days:</Text>
+                        <Text style={styles.label}>Subscription Left Days:</Text>
                         <Text style={styles.value}>{subscriptionStatus?.data?.[2] + ' days' || 'N/A'}</Text>
                     </Card.Content>
                 </Card>

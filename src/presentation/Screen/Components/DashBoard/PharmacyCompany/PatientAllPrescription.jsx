@@ -6,53 +6,59 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { HealthContext } from '../../../../../logic/context/health';
 import { useNavigation } from '@react-navigation/native';
+import { fetchPharmacyCompanyData, getAdminToPharmacyData } from '../../../../../logic/redux/pharmacy company/pharmacyCompanySlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAdminData } from '../../../../../logic/redux/admin/AdminSlice';
+import { ethers } from 'ethers';
 
-const PatientAlPrescription = () => {
+const PatientAllPrescription = () => {
   const theme = useTheme();
-  const {isLoading,getPharmacyCompanyAllData,PharmacyCompany,patientToParmacyCompany,
-      reducerValue,getPatientToPharmacy,setIsDbVisiable} = useContext(HealthContext);
-      const [prescriptionSenderPatientsList, setPrescriptionSenderPatientsList] = useState([]);
+  const {
+    reducerValue } = useContext(HealthContext);
+  const dispatch = useDispatch();
+  const { pharmacyCompanyData, AdminToPharmacy, loading, error } = useSelector((state) => state.pharmacyCompany);
+  const [prescriptionSenderAdmin, setPrescriptionSenderAdmin] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = () => {
     setRefreshing(true);
-    getPharmacyCompanyAllData();
-    getPatientToPharmacy()
+
+    dispatch(getAdminToPharmacyData())
     setRefreshing(false);
   };
   useEffect(() => {
-    getPharmacyCompanyAllData();
-    getPatientToPharmacy()
-    PharmacyCompany
-    setIsDbVisiable(false)
-  }, [])
-  useEffect(() => {
-    if (!isLoading && Array.isArray(patientToParmacyCompany)) {
-      const senderPatients = patientToParmacyCompany;
-      setPrescriptionSenderPatientsList(senderPatients || []);
-    }
-  }, [PharmacyCompany, isLoading]);
+  
+    dispatch(getAdminToPharmacyData())
+    
 
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!AdminToPharmacy.loading && Array.isArray(AdminToPharmacy.data)) {
+      setPrescriptionSenderAdmin(AdminToPharmacy.data || []);
+    }
+  }, [AdminToPharmacy, AdminToPharmacy.loading]);
+console.log('prescriptionSenderAdmin',prescriptionSenderAdmin)
   return (
     <View style={styles.container}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Animated.View entering={FadeInDown.springify()} exiting={FadeInUp.springify()}>
-          {isLoading ? (
+          {loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size={40} animating={true} color={theme.colors.blueA400} />
             </View>
           ) : (
             <>
-              {prescriptionSenderPatientsList.length > 0 ? (
-                prescriptionSenderPatientsList.slice().reverse().map((patient, index) => (
-                  <PatientCard key={index} patient={patient} />
+              {prescriptionSenderAdmin.length > 0 ? (
+                prescriptionSenderAdmin.slice().reverse().map((admin, index) => (
+                  <AdminCard key={index} admin={admin} />
                 ))
               ) : (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
-                    <Text style={styles.title}>You don't have treatment from anyone</Text>
+                    <Text style={styles.title}>Admin didnot send any prescription yet.</Text>
                   </Card.Content>
                 </Card>
               )}
@@ -64,45 +70,43 @@ const PatientAlPrescription = () => {
   );
 };
 
-const PatientCard = ({ patient }) => {
-  const { isLoading ,getPatientAllData } = useContext(HealthContext);
+const AdminCard = ({ admin }) => {
+  console.log("r",admin)
+
   const [patientData, setPatientData] = useState(null);
- 
+  const { adminData } = useSelector((state) => state.admin);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
-      if (!isLoading) {
-        try {
-          const data = await getPatientAllData(patient);
-          setPatientData(data);
-          
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
-    fetchData();
-  }, [patient, isLoading]);
+      const saAddress = admin
 
+      dispatch(fetchAdminData(saAddress));
+    };
+    fetchData()
+
+  }, [admin]);
+console.log("adminData",adminData.data[5])
   return (
     <TouchableOpacity onPress={() => {
-      navigation.navigate('DisplayFile', { imageUrls: patientData.imgUrl });
-  }}>
-    <Card style={styles.card}>
-      <Card.Content>
-        {patientData ? (
-          <>
-          <CustomText label="Account" value={patientData[0]} />
-              <CustomText label="PatientId" value={String(patientData[1])} />
-              <CustomText label="Patient Name" value={patientData[2]} />
-              <CustomText label="Patient Gender" value={patientData[3]} />
-          </>
-        ) : (
-          <ActivityIndicator />
-        )}
-      </Card.Content>
+      navigation.navigate('DisplayFile', { imageUrls: adminData?.data?.[5] });
+    }}>
+      <Card style={styles.card}>
+        <Card.Content>
+          {adminData.data ? (
+            <>
+              <CustomText label="Account" value={adminData?.data?.[0]} />
+              <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
+              <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(adminData?.data?.[2])} />
+              <CustomText label="Admin Gender" value={ethers
+                .utils.parseBytes32String(adminData?.data?.[3])} />
+            </>
+          ) : (
+            <ActivityIndicator />
+          )}
+        </Card.Content>
       </Card>
-      </TouchableOpacity>
+    </TouchableOpacity>
   );
 };
 
@@ -145,4 +149,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PatientAlPrescription;
+export default PatientAllPrescription;

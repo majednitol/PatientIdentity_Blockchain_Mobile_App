@@ -3,7 +3,7 @@
 
 require("@nomicfoundation/hardhat-toolbox");
 const API_URL = `https://data-seed-prebsc-1-s1.bnbchain.org:8545`
-const PRIVATE_KEY = "074fd3aa39570fef8da07e9ed44115fe1cf41b0798f881fa6ed71e9feb9e6ecd"
+const PRIVATE_KEY = "e3804017109d1c513f95c87a5c29a7b6d56b2b8325d8754c9116fdc2356d1611"
 
 module.exports = {
   solidity: {

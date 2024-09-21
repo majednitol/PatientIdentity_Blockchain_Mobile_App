@@ -7,9 +7,6 @@ import { Card, Text, useTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
-
-
-
 import { fetchDoctorData, fetchPatientDataFromDoctor, getDoctorAnotherData } from '../../../../../logic/redux/doctor/DoctorSlice';
 
  import { fetchPatientData } from '../../../../../logic/redux/patient/PatientSlice';

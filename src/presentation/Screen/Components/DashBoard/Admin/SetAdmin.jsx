@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createAdminAccount } from '../../../../../logic/redux/admin/AdminSlice';
 import { ActivityIndicator, TextInput } from 'react-native-paper';
 import { Dimensions } from 'react-native';
+import { DatePickerInput } from 'react-native-paper-dates';
 const { width, height } = Dimensions.get('window');
 const SetAdmin = () => {
     const {
@@ -72,7 +73,6 @@ const SetAdmin = () => {
             name.trim() !== '' &&
             gender.trim() !== '' &&
             age.trim() !== '' &&
-            inputDate.trim() !== '' &&
             location.trim() !== '' 
         ) {
             console.log('Form submitted');
@@ -102,7 +102,6 @@ const SetAdmin = () => {
             setErrors({
                 name: name.trim() === '',
                 gender: gender.trim() === '',
-                inputDate: inputDate.trim() === '',
                 age: age.trim() === '',
                 location: location.trim() === '',
 

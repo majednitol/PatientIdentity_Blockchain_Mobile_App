@@ -37,16 +37,12 @@ const AdminPrescription = () => {
 
     fetchData()
     adminData.data
+    console.log(adminData?.data?.[5])
     setIsDbVisiable(true)
 
 
-  }, [reducerValue])
+  }, [])
 
-  useEffect(() => {
-    fetchData()
-
-
-  }, [reducerValue]);
 
 
   if (adminData.loading) {

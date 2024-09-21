@@ -15,6 +15,18 @@ export const fetchMedicalResearchLabData = createAsyncThunk('fetchMedicalResearc
         throw error;
     }
 });
+export const getadminToMedRcLabData = createAsyncThunk('getadminToMedRcLabData', async () => {
+    try {
+        const contract = await Contract.fetchContract()
+        const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+        const adminAddress = await contract?.getadminToMedRcLab(saAddress);
+        console.log("adminAddress", adminAddress)
+        return adminAddress.map(item => item.toString());
+    } catch (error) {
+        console.log("error",error)
+        throw error;
+    }
+});
 export const createMedicalResearchLabAccount = createAsyncThunk('createMedicalResearchLabAccount', async ({ labID, name, licenseID, researchArea, labRating, emailAddress }) => {
 
     try {
@@ -50,9 +62,28 @@ const medicalResearchLabSlice = createSlice({
         medicalResearchLabData: null,
         loading: false,
         error: null,
-        success: null
+        success: null,
+        adminToMedRcLab: {
+            data: null,
+            loading: false,
+            error: null,
+            success: null
+        }
     },
     extraReducers: (builder) => {
+        builder.addCase(getadminToMedRcLabData.pending, (state) => {
+            state.adminToMedRcLab.loading = true;
+            state.adminToMedRcLab.error = null;
+
+        });
+        builder.addCase(getadminToMedRcLabData.fulfilled, (state, action) => {
+            state.adminToMedRcLab.loading = false;
+            state.adminToMedRcLab.data = action.payload;
+        });
+        builder.addCase(getadminToMedRcLabData.rejected, (state, action) => {
+            state.adminToMedRcLab.loading = false;
+            state.adminToMedRcLab.error = action.error.message;
+        });
         builder.addCase(fetchMedicalResearchLabData.pending, (state) => {
             state.loading = true;
             state.error = null;

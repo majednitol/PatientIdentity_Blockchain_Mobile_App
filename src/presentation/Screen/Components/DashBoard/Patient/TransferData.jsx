@@ -26,7 +26,7 @@ const TransferData = () => {
       const isValidAddress = /^0x[a-fA-F0-9]{40}$/;
       if (isValidAddress.test(scannedAddress)) {
         dispatch(shareDataByPatient({ scannedAddress })).then(() => {
-          Alert.alert("Prescription shared successfully", "You can now view it on the patient's dashboard.");
+          Alert.alert("Prescription shared successfully");
         });
         setScanAddress('');
       } else {

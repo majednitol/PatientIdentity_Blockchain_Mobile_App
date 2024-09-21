@@ -197,9 +197,9 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!loading && pathologistData?.[11]?.length > 0) {
-        if (typeof pathologistData?.[11] === 'string') {
-          dataArray = pathologistData?.[11].split(',').map(item => item.trim());
+      if (!loading && pathologistData?.[7]?.length > 0) {
+        if (typeof pathologistData?.[7] === 'string') {
+          dataArray = pathologistData?.[7].split(',').map(item => item.trim());
           console.log("dataArray", dataArray)
           const dataPromises = dataArray?.map((doctor) => {
             return dispatch(fetchDoctorData(doctor));

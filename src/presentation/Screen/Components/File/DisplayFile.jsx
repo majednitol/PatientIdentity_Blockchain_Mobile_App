@@ -39,7 +39,7 @@ const QRCodeGenerator = ({ url, onClose }) => {
 };
 
 const DisplayFile = ({ userData, route }) => {
-    const { ConnectedAccountUser, reducerValue, anotherUser, isDbVisiable, setIsDbVisiable,downloadProgress, setDownloadProgress,userAddress,setUserAddress } = useContext(HealthContext);
+    const { ConnectedAccountUser, reducerValue, anotherUser, isDbVisiable, setIsDbVisiable, downloadProgress, setDownloadProgress, userAddress, setUserAddress } = useContext(HealthContext);
     const dispatch = useDispatch();
 
     const { connectedUserType } = useSelector((state) => state.connectedUser);
@@ -47,7 +47,7 @@ const DisplayFile = ({ userData, route }) => {
     const { success, deleteLoader, error } = useSelector((state) => state.patient);
     const [images, setImages] = useState([]);
     const { imageUrls } = route?.params ?? {};
-    console.log('userData', userData)
+    console.log('userData', imageUrls)
     const [selectedImage, setSelectedImage] = useState(null);
     const [fullscreen, setFullscreen] = useState(false);
     const [selectedUrl, setSelectedUrl] = useState(null);
@@ -70,12 +70,18 @@ const DisplayFile = ({ userData, route }) => {
     const getData = async () => {
         try {
             let dataArray = userData || imageUrls;
-
-            if (typeof userData === 'string') {
-                dataArray = userData.split(',').map(item => item.trim());
-            }
             console.log("dataArray", dataArray);
+            
+            if (typeof userData === 'string' || typeof imageUrls === 'string') {
+                if (userData) {
+                    dataArray = userData?.split(',').map(item => item.trim()); 
+                } else if (imageUrls) {
+                    dataArray = imageUrls?.split(',').map(item => item.trim());
+                }
+            }
             setData(dataArray);
+            console.log("dataArray", dataArray);
+            // setData(dataArray);
             const imageComponents = dataArray.slice().reverse().map((item, i) => (
                 <View key={i} style={styles.imageContainerItem}>
 
@@ -148,7 +154,7 @@ const DisplayFile = ({ userData, route }) => {
                 {images.length > 0 ? (
                     <>
                         {console.log("images.length", images.length)}
-                        {images.slice(curPage * 9, (curPage + 1) * 9)}
+                        {images?.slice(curPage * 9, (curPage + 1) * 9)}
                         <View style={styles.navigationButtons}>
                             <Button mode="text" style={{ paddingRight: 5 }} disabled={curPage === 0 ? true : false} onPress={goToPreviousPage}>Previous</Button>
                             <PaginationDot
@@ -230,9 +236,9 @@ const DisplayFile = ({ userData, route }) => {
 
                     {((String(connectedUserType) == '5' || String(connectedUserType) == '1' || String(connectedUserType) == '2') && isDbVisiable === true) ? (<TouchableOpacity style={styles.button3} onPress={async () => {
                         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
-                        
+
                         console.log('data?.length - 1 - currentImageIndex', currentImageIndex)
-                        dispatch(deletePrescription(data?.length - 1 - currentImageIndex,saAddress)).then(() => {
+                        dispatch(deletePrescription(data?.length - 1 - currentImageIndex, saAddress)).then(() => {
                             Alert.alert("Deleted successfully")
                         })
                     }}>{deleteLoader ? <ActivityIndicator color="white" /> : <Text style={{ color: 'white', fontWeight: 'bold' }}>Delete</Text>}</TouchableOpacity>) : null}

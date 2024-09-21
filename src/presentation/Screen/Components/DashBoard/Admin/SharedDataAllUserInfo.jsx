@@ -6,41 +6,41 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { HealthContext } from '../../../../../logic/context/health';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchAdminData } from '../../../../../logic/redux/admin/AdminSlice';
+import { fetchAdminData, getsharedAllUsersAddress } from '../../../../../logic/redux/admin/AdminSlice';
+import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
 
 const SharedDataAllUserInfo = () => {
     const theme = useTheme();
-    const { isLoading, reducerValue, sharedAllUsersAddress, getsharedAllUsersAddress } = useContext(HealthContext);
-    const { adminData } = useSelector((state) => state.admin);
+    const { isLoading, reducerValue, sharedAllUsersAddress } = useContext(HealthContext);
+    const { adminData,sharedAllUsers } = useSelector((state) => state.admin);
     const [SharedDataAllUserAddress, setSharedDataAllUserAddress] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const dispatch = useDispatch();
     const fetchData = async () => {
-      const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
-      console.log('saAddress7777', saAddress);
-      dispatch(fetchAdminData(saAddress))
+        const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+        console.log('saAddress7777', saAddress);
+        dispatch(getsharedAllUsersAddress())
     };
     const onRefresh = () => {
         setRefreshing(true);
         fetchData();
-        getsharedAllUsersAddress()
+
 
         setRefreshing(false);
     };
     useEffect(() => {
         fetchData();
-        getsharedAllUsersAddress()
-        adminData?.data
-    }, [reducerValue])
+        
+    }, [dispatch])
     useEffect(() => {
-        if (!isLoading && Array.isArray(adminData?.data)) {
-            const alluserAddress = sharedAllUsersAddress;
+        if (!isLoading && Array.isArray(sharedAllUsers?.data)) {
+            const alluserAddress = sharedAllUsers.data;
             setSharedDataAllUserAddress(alluserAddress || []);
-            
+
 
         }
-    }, [adminData?.data, isLoading]);
-
+    }, [sharedAllUsers?.data, isLoading]);
+console.log('SharedDataAllUserAddress',sharedAllUsers.data)
     return (
         <View style={styles.container}>
             <ScrollView

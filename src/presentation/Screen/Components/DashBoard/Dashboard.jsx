@@ -14,13 +14,11 @@ import TransferData from './Patient/TransferData';
 import PatientPersonalDoctors from './Patient/PatientPersonalDoctors';
 import GetPathologistPersonalData from './Pathologist/GetPathologistPersonalData';
 import SentTestReportToDoctor from './Pathologist/SentTestReportToDoctor';
-import ViewPatientPrescriptionSentByDoctor from './Pathologist/ViewPatientPrescriptionSentByDoctor';
 import GetMediResearchLabPersonalData from './MedicalResearchLab/GetMediResearchLabPersonalData';
 import AddResearchLabReport from './MedicalResearchLab/AddResearchLabResport';
 import ViewPrescriptionOrLabReport from './MedicalResearchLab/ViewPrescriptionOrLabReport';
 import GetDoctorPersonalData from './Doctor/GetDoctorPersonalData';
 import SentPrescription from './Doctor/SentPrescription';
-import SharedDataFromPathologist from './Doctor/SharedDataFromPathologist';
 import DoctorPersonalPatientList from './Doctor/DoctorPersonalPatientList';
 import GetPharmacyCompanyPersonalData from './PharmacyCompany/GetPharmacyCompanyPersonalData';
 import AddingTopMedichine from './PharmacyCompany/AddingTopMedicine';
@@ -29,35 +27,26 @@ import Upload_File from './Patient/Upload_File';
 import Animated from 'react-native-reanimated';
 import ProfilePicture from '../File/ProfilePicture';
 import PatientPrescription from './Doctor/PatientPrescription';
-import { ActivityIndicator, Icon, MD3Colors, Text } from 'react-native-paper';
+import { ActivityIndicator, Icon, Text } from 'react-native-paper';
 import Notification from '../Notification';
-import PatientAllPrescription from './PharmacyCompany/PatientAllPrescription';
-import PatientAlPrescription from './MedicalResearchLab/PatientAlPrescription';
+
 import { useContext, useEffect, useState } from 'react';
 import { HealthContext } from '../../../../logic/context/health';
-import Address from '../../../../service/wallet connect/Address';
-import { ScannerScreen } from '../../../../scanner/qrcode scanner/ScannerScreen';
 
 import OwnQRCode from '../File/OwnQRCode';
 import { ScrollView } from 'react-native';
 import ImageScanner from '../../../../scanner/image scanner/ImageScanner';
 import SharedDataAllUserInfo from './Admin/SharedDataAllUserInfo';
-import FileUpload from '../File/FileUpload';
-import PathologistList from './Doctor/DoctorToPathologist';
-import DoctorList from './Pathologist/DoctorList';
 import PathologistFromDoctor from './Pathologist/PathologistFromDoctor';
 import PathologistToDoctor from './Pathologist/PathologistToDoctor';
 import DoctorFromPathologist from './Doctor/DoctorFromPathologist';
 import DoctorToPathologist from './Doctor/DoctorToPathologist';
-import SearchUser from './SearchUser';
 
-import PatientView from '../../../../logic/redux/patient/PatientView';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchConnectedUser } from '../../../../logic/redux/connectedUserType/connectedUserSlice';
 import { fetchPatientData } from '../../../../logic/redux/patient/PatientSlice';
 import SmartAccount from '../../../../service/wallet connect/SmartAccount';
 import { setPrivateKey } from '../../../../logic/redux/privateKey/privateKeySlice';
-import { getWeb3Auth } from '../../../../logic/redux/web3auth/web3authSlice';
 import { fetchDoctorData } from '../../../../logic/redux/doctor/DoctorSlice';
 import { fetchMedicalResearchLabData } from '../../../../logic/redux/medical research lab/medicalResearchLabSlice';
 import { fetchPharmacyCompanyData } from '../../../../logic/redux/pharmacy company/pharmacyCompanySlice';
@@ -65,12 +54,15 @@ import { fetchPathologistData } from '../../../../logic/redux/pathologist/pathol
 import { ethers } from 'ethers';
 import PersonalInfo from './Admin/PersonalInfo';
 import Useranalytics from './Admin/UserAnalytics';
-import PaymentScreen from '../../payment geteway/PaymentScreen';
 import SubscriptionInfo from './../../payment geteway/SubscriptionInfo';
 import ShareData from './Admin/ShareData';
 import AdminPrescription from './Admin/Prescription';
 import { fetchAdminData } from '../../../../logic/redux/admin/AdminSlice';
 import SharedDataAllDoctorsInfo from './Patient/SharedDataAllDoctorInfo';
+import PatientAllPrescription from './PharmacyCompany/PatientAllPrescription';
+import PatientAllprescription from './MedicalResearchLab/PatientAllprescription';
+
+
 
 const Drawer = createDrawerNavigator();
 
@@ -461,6 +453,7 @@ export default function Dashboard() {
             }}
             component={SharedDataAllDoctorsInfo}
           />
+          
 
           {/* <Drawer.Screen
             name="patient"
@@ -883,7 +876,7 @@ export default function Dashboard() {
                 />
               ),
             }}
-            component={PatientAlPrescription}
+            component={PatientAllprescription}
           />
           <Drawer.Screen
             name="Prescription or Report"

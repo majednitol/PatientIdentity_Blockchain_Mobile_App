@@ -33,10 +33,10 @@ const SharedDataAllDoctorsInfo = () => {
         fetchData();
         dispatch(getsharedAllDoctorAddress())
         patientData
-    }, [reducerValue])
+    }, [dispatch])
     useEffect(() => {
         if (!isLoading && Array.isArray(patientData)) {
-            const allDoctorsAddress = sharedAllDoctorAddress;
+            const allDoctorsAddress = sharedAllDoctorAddress.data;
             setSharedDataAllDoctorAddress(allDoctorsAddress || []);
 
 
