@@ -112,24 +112,24 @@ ShareData sd;
     }
 
 
-    function getPatientToAdmin(
+    function getPatientToAdmin(address userAddress
     ) public view returns (address[] memory) {
-        return admin[msg.sender].PatientToAdmin.values();
+        return admin[userAddress].PatientToAdmin.values();
     }
 
-    function getPersonalDoctor() public view returns (address[] memory) {
-        return patients[msg.sender].personalDoctor.values();
+    function getPersonalDoctor(address userAddress) public view returns (address[] memory) {
+        return patients[userAddress].personalDoctor.values();
     }
 
     // EnumerableSet.AddressSet sharedAllDoctorAndAdminAddress;
  
 
-    function getsharedAllDoctorAddress()
+    function getsharedAllDoctorAddress(address userAddress)
         public
         view
         returns (address[] memory)
     {
-        return patients[msg.sender].sharedAllDoctorAddress.values();
+        return patients[userAddress].sharedAllDoctorAddress.values();
     }
 
   
@@ -224,8 +224,8 @@ ShareData sd;
     }
     // EnumerableSet.AddressSet adminToMedRcLab;
 
-    function getadminToMedRcLab() public view returns (address[] memory) {
-        return medicalResearchLabs[msg.sender].adminToMedRcLab.values();
+    function getadminToMedRcLab(address userAddress) public view returns (address[] memory) {
+        return medicalResearchLabs[userAddress].adminToMedRcLab.values();
     }
 
     struct PharmacyCompany {
@@ -259,8 +259,8 @@ ShareData sd;
     // EnumerableSet.AddressSet adminToPharmacy;
 
 
-    function getAdminToPharmacy() public view returns (address[] memory) {
-        return pharmacyCompanies[msg.sender].adminToPharmacy.values();
+    function getAdminToPharmacy(address userAddress) public view returns (address[] memory) {
+        return pharmacyCompanies[userAddress].adminToPharmacy.values();
     }
 
 
