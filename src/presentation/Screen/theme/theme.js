@@ -4,8 +4,8 @@ export const lightMode = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    primary: 'rgb(108, 99, 255)',
-    background: 'rgb(228, 226, 255)',
+    primary: '#8D68F6',
+    background: '#F6F6F6',
     "elevation": {
       "level0": "transparent",
       "level1": "rgb(222, 220, 255)",

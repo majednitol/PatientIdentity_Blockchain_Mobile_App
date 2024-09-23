@@ -13,14 +13,17 @@ import { fetchPathologistDataFromDoctor, getDoctorAnotherData } from '../../../.
 import { useNavigation } from '@react-navigation/native';
 import { fetchPathologistData } from '../../../../../logic/redux/pathologist/pathologistSlice1';
 import { HealthContext } from '../../../../../logic/context/health';
+import ProfilePicture from '../../File/ProfilePicture';
+import { ethers } from 'ethers';
 
 const DoctorToPathologist = () => {
-    
+
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { doctorAnotherData,loading } = useSelector((state) => state.doctor);
+  const { doctorAnotherData, loading } = useSelector((state) => state.doctor);
   const [pathologistDataArray, setPathologistDataArray] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     dispatch(getDoctorAnotherData());
@@ -41,15 +44,17 @@ const DoctorToPathologist = () => {
           // dispatch(fetchPatientDataFromDoctor(doctor));
           setPathologistDataArray(pathologistDataArray.map(data => data.payload));
         }
+        setIsDataLoaded(true);
       }
-      
+
     };
     fetchData();
   }, [loading, doctorAnotherData]);
 
   const onRefresh = () => {
     setRefreshing(true);
-    
+    dispatch(getDoctorAnotherData());
+    isDataLoaded(false);
     setRefreshing(false);
   };
 
@@ -65,16 +70,16 @@ const DoctorToPathologist = () => {
             </View>
           ) : (
             <>
-              {pathologistDataArray.length > 0 ? (
-                pathologistDataArray.map((pathologistData, index) => (
-                  <PathoLogistCard key={index} pathologistData={pathologistData} />
-                ))
-              ) : (
+              {isDataLoaded && pathologistDataArray.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>You didn't sent any prescription to any pathologist</Text>
                   </Card.Content>
                 </Card>
+              ) : (
+                pathologistDataArray.map((pathologistData, index) => (
+                  <PathoLogistCard key={index} pathologistData={pathologistData} />
+                ))
               )}
             </>
           )}
@@ -87,58 +92,68 @@ const DoctorToPathologist = () => {
 const PathoLogistCard = ({ pathologistData }) => {
   console.log('patientData', pathologistData);
   const dispatch = useDispatch();
-    const { setIsDbVisiable,setUserAddress} = useContext(HealthContext);
+  const { setIsDbVisiable, setUserAddress } = useContext(HealthContext);
   const navigation = useNavigation();
-  
+
   // const [doctorDataArray, setDoctorDataArray] = useState([]);
 
   const fetchData2 = async () => {
-    if ( pathologistData?.length > 0) {
-     
+    if (pathologistData?.length > 0) {
+
       const patientDataFromDoctor =
-         dispatch(fetchPathologistDataFromDoctor(pathologistData[0]));
-      
-         patientDataFromDoctor.then((response) => {
-          // Access the payload array
-           const payloadArray = response.payload;
-           if (payloadArray!==null) {
-               navigation.navigate('DisplayFile', { imageUrls: payloadArray });
-              //  setUserAddress(pathologist)
-               setIsDbVisiable(true)
-         }
-          
-          console.log('patientDataFromDoctorpayloadArray',payloadArray);
-        }).catch((error) => {
-          console.error('Error fetching doctor data:', error);
-        });
-  }
-    
+        dispatch(fetchPathologistDataFromDoctor(pathologistData[0]));
+
+      patientDataFromDoctor.then((response) => {
+        // Access the payload array
+        const payloadArray = response.payload;
+        if (payloadArray !== null) {
+          navigation.navigate('DisplayFile', { imageUrls: payloadArray });
+          //  setUserAddress(pathologist)
+          setIsDbVisiable(true)
+        }
+
+        console.log('patientDataFromDoctorpayloadArray', payloadArray);
+      }).catch((error) => {
+        console.error('Error fetching doctor data:', error);
+      });
+    }
+
   };
   //  useEffect(() => {
-   
-    
+
+
   // }, [ doctorData]);
   return (
-    <TouchableOpacity onPress={async () => {
-      await fetchData2();
-      // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
-      
-    }}>
-      <Card style={styles.card}>
+    <View>
+      <Card style={styles.card} onPress={async () => {
+        await fetchData2();
+        // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
+
+      }}>
         <Card.Content>
           {pathologistData ? (
             <>
-            <CustomText label="Account " value={pathologistData?.[0]} />
-                               <CustomText label="EmailAddress" value={''} />
-                              <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
-                               <CustomText label="Pathologist Name" value={pathologistData?.[2]} />
+              <View style={{
+                flexDirection: 'row',         // Aligns buttons in a row
+                justifyContent: 'space-between',     // Centers buttons horizontally
+                alignItems: 'center',         // Centers buttons vertically
+
+              }}>
+                <ProfilePicture userData={pathologistData?.[11]} height={150} width={119} borderRadius={20} />
+                <View>
+                  <CustomText label="Account " value={pathologistData?.[0]} />
+                  <CustomText label="EmailAddress" value={''} />
+                  <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
+                  <CustomText label="Pathologist Name" value={ethers.utils.parseBytes32String(pathologistData?.[2])} />
+                </View>
+              </View>
             </>
           ) : (
             <ActivityIndicator />
           )}
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+    </View>
   );
 };
 

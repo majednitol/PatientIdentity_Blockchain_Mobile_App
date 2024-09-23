@@ -68,7 +68,7 @@
 // // const PatientCard = ({ patient }) => {
 // //   const { isLoading ,getPatientAllData } = useContext(HealthContext);
 // //   const [patientData, setPatientData] = useState(null);
- 
+
 // //   const navigation = useNavigation();
 // //   useEffect(() => {
 // //     const fetchData = async () => {
@@ -76,7 +76,7 @@
 // //         try {
 // //           const data = await getPatientAllData(patient);
 // //           setPatientData(data);
-          
+
 // //         } catch (error) {
 // //           console.error(error);
 // //         }
@@ -190,14 +190,14 @@
 //           setPatientDataArray(patientDataArray.map(data => data.payload));
 //         }
 //       }
-      
+
 //     };
 //     fetchData();
 //   }, [loading, doctorAnotherData]);
 
 //   const onRefresh = () => {
 //     setRefreshing(true);
-    
+
 //     setRefreshing(false);
 //   };
 
@@ -237,7 +237,7 @@
 //   const dispatch = useDispatch();
 
 //   const navigation = useNavigation();
-  
+
 
 //   const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
 //   const fetchData2 = async () => {
@@ -245,13 +245,13 @@
 //       const patientPrescription = patientData?.[8]
 //       if (typeof patientPrescription === 'string') {
 //         dataArray = patientPrescription.split(',').map(item => item.trim());
-      
+
 //         console.log('patientPrescription', dataArray)
-     
+
 //         navigation.navigate('DisplayFile', { imageUrls: dataArray });
-        
-          
-          
+
+
+
 //       }
 //     }
 //   };
@@ -259,7 +259,7 @@
 //   return (
 //     <TouchableOpacity onPress={async () => {
 //       await fetchData2();
-      
+
 //     }}>
 //       <Card style={styles.card}>
 //         <Card.Content>
@@ -335,6 +335,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminData } from '../../../../../logic/redux/admin/AdminSlice';
 import { ethers } from 'ethers';
 import { getadminToMedRcLabData } from '../../../../../logic/redux/medical research lab/medicalResearchLabSlice';
+import ProfilePicture from '../../File/ProfilePicture';
 
 const PatientAllprescription = () => {
   const theme = useTheme();
@@ -344,23 +345,25 @@ const PatientAllprescription = () => {
   const { adminToMedRcLab, loading } = useSelector((state) => state.medicalResearchLab);
   const [prescriptionSenderAdmin, setPrescriptionSenderAdmin] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const onRefresh = () => {
     setRefreshing(true);
 
     dispatch(getadminToMedRcLabData())
+    setIsDataLoaded(false);
     setRefreshing(false);
   };
   useEffect(() => {
-  
-    dispatch(getadminToMedRcLabData())
-    
 
-  }, [])
+    dispatch(getadminToMedRcLabData())
+
+
+  }, [dispatch,adminToMedRcLab.loading])
   useEffect(() => {
-    if (!loading && Array.isArray(adminToMedRcLab.data)) {
-      
+    if (!adminToMedRcLab.loading && Array.isArray(adminToMedRcLab.data)) {
+
       setPrescriptionSenderAdmin(adminToMedRcLab.data || []);
+      setIsDataLoaded(true);
     }
   }, [adminToMedRcLab, adminToMedRcLab.loading]);
 
@@ -370,22 +373,22 @@ const PatientAllprescription = () => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Animated.View entering={FadeInDown.springify()} exiting={FadeInUp.springify()}>
-          {loading ? (
+          {adminToMedRcLab.loading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size={40} animating={true} color={theme.colors.blueA400} />
             </View>
           ) : (
             <>
-              {prescriptionSenderAdmin.length > 0 ? (
-                prescriptionSenderAdmin.slice().reverse().map((admin, index) => (
-                  <AdminCard key={index} admin={admin} />
-                ))
-              ) : (
+              {isDataLoaded && prescriptionSenderAdmin.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>Admin didnot send any prescription yet.</Text>
                   </Card.Content>
                 </Card>
+              ) : (
+                prescriptionSenderAdmin.slice().reverse().map((admin, index) => (
+                  <AdminCard key={index} admin={admin} />
+                ))
               )}
             </>
           )}
@@ -396,7 +399,7 @@ const PatientAllprescription = () => {
 };
 
 const AdminCard = ({ admin }) => {
-  console.log("r",admin)
+  console.log("r", admin)
 
   const [patientData, setPatientData] = useState(null);
   const { adminData } = useSelector((state) => state.admin);
@@ -411,27 +414,37 @@ const AdminCard = ({ admin }) => {
     fetchData()
 
   }, [admin]);
-// console.log("adminData",adminData.data[5])
+  // console.log("adminData",adminData.data[5])
   return (
-    
+
     <Card style={styles.card} onPress={() => {
       navigation.navigate('DisplayFile', { imageUrls: adminData?.data?.[5] });
     }}>
-        <Card.Content>
-          {adminData.data ? (
-            <>
-              <CustomText label="Account" value={adminData?.data?.[0]} />
-              <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
-              <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(adminData?.data?.[2])} />
-              <CustomText label="Admin Gender" value={ethers
-                .utils.parseBytes32String(adminData?.data?.[3])} />
-            </>
-          ) : (
-            <ActivityIndicator />
-          )}
-        </Card.Content>
-      </Card>
-  
+      <Card.Content>
+        {adminData.data ? (
+          <>
+            <View style={{
+              flexDirection: 'row',         // Aligns buttons in a row
+              justifyContent: 'space-between',     // Centers buttons horizontally
+              alignItems: 'center',         // Centers buttons vertically
+
+            }}>
+              <ProfilePicture userData={adminData.data?.[4]} height={150} width={119} borderRadius={20} />
+              <View>
+                <CustomText label="Account" value={adminData?.data?.[0]} />
+                <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
+                <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(adminData?.data?.[2])} />
+                <CustomText label="Admin Gender" value={ethers
+                  .utils.parseBytes32String(adminData?.data?.[3])} />
+              </View>
+            </View>
+          </>
+        ) : (
+          <ActivityIndicator />
+        )}
+      </Card.Content>
+    </Card>
+
   );
 };
 

@@ -15,7 +15,7 @@ const SplashScreen = ({navigation}) => {
     const timer = setTimeout(() => {
       NetInfo.addEventListener(state => {
         if (state.isConnected === false) {
-          navigation.replace('NotConnected');
+          navigation.navigate('NotConnected');
           console.log('object not');
         } else if (state.isConnected === true) {
           navigation.replace('HomeScreen');
@@ -29,7 +29,7 @@ const SplashScreen = ({navigation}) => {
   return (
     <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
       <Image
-        source={require('../../../../assets/splash2.png')}
+        source={require('../../../../assets/Splash.png')}
         style={{
           width: screenWidth,
           height: screenHeight,

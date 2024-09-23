@@ -85,7 +85,7 @@
 //     }
 //   };
 //   useEffect(() => {
-   
+
 //     if (imageUrl?.length > 0) {
 //       setIsUserCardShowTo(true)
 //     }
@@ -178,6 +178,8 @@ import { fetchDoctorData } from '../../../../../logic/redux/doctor/DoctorSlice';
 import { useNavigation } from '@react-navigation/native';
 import { fetchDoctorDataFromPathologist, fetchPathologistData } from '../../../../../logic/redux/pathologist/pathologistSlice1';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
+import { ethers } from 'ethers';
+import ProfilePicture from '../../File/ProfilePicture';
 
 const PathologistToDoctor = () => {
   const theme = useTheme();
@@ -185,8 +187,9 @@ const PathologistToDoctor = () => {
   const { pathologistData, loading, error } = useSelector((state) => state.pathologist);
 
   const [doctorDataArray, setDoctorDataArray] = useState([]);
-const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
+  const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const fetchpathoData = async () => {
     const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
     dispatch(fetchPathologistData(saAddress));
@@ -208,17 +211,19 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
           console.log('doctorDataArray', doctorDataArray)
           // dispatch(fetchPatientDataFromDoctor(doctor));
           setDoctorDataArray(doctorDataArray.map(data => data.payload));
-        
+
         }
+        setIsDataLoaded(true);
       }
-      
+
     };
     fetchData();
-  }, [loading,pathologistData]);
+  }, [loading, pathologistData]);
 
   const onRefresh = () => {
     setRefreshing(true);
-    
+    fetchpathoData()
+    isDataLoaded(false)
     setRefreshing(false);
   };
 
@@ -234,16 +239,16 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
             </View>
           ) : (
             <>
-              {doctorDataArray.length > 0 ? (
-                doctorDataArray.map((doctorData, index) => (
-                  <DoctorCard key={index} doctorData={doctorData} />
-                ))
-              ) : (
+              {isDataLoaded && doctorDataArray.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>No doctor data available</Text>
                   </Card.Content>
                 </Card>
+              ) : (
+                doctorDataArray.map((doctorData, index) => (
+                  <DoctorCard key={index} doctorData={doctorData} />
+                ))
               )}
             </>
           )}
@@ -262,50 +267,56 @@ const DoctorCard = ({ doctorData }) => {
   // const [doctorDataArray, setDoctorDataArray] = useState([]);
   const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const fetchData2 = async () => {
-    if ( doctorData?.length > 0) {
-     
+    if (doctorData?.length > 0) {
+
       const patientDataFromDoctor =
-         dispatch(fetchDoctorDataFromPathologist(doctorData[0]));
-      
-         patientDataFromDoctor.then((response) => {
-          // Access the payload array
-           const payloadArray = response.payload;
-           if (payloadArray!==null) {
-            navigation.navigate('DisplayFile', { imageUrls: payloadArray });
-         }
-          // setPatientDataFromDoctorArray(payloadArray)
-          console.log('patientDataFromDoctorpayloadArray',payloadArray);
-        }).catch((error) => {
-          console.error('Error fetching doctor data:', error);
-        });
-  }
-    
+        dispatch(fetchDoctorDataFromPathologist(doctorData[0]));
+
+      patientDataFromDoctor.then((response) => {
+        // Access the payload array
+        const payloadArray = response.payload;
+        if (payloadArray !== null) {
+          navigation.navigate('DisplayFile', { imageUrls: payloadArray });
+        }
+        // setPatientDataFromDoctorArray(payloadArray)
+        console.log('patientDataFromDoctorpayloadArray', payloadArray);
+      }).catch((error) => {
+        console.error('Error fetching doctor data:', error);
+      });
+    }
+
   };
-   useEffect(() => {
-   
-    
-  }, [ doctorData]);
+  useEffect(() => {
+
+
+  }, [doctorData]);
   return (
-    <TouchableOpacity onPress={async () => {
-      await fetchData2();
-      // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
-      
-    }}>
+    <View>
       <Card style={styles.card}>
         <Card.Content>
           {doctorData ? (
             <>
-              <CustomText label="Account " value={doctorData[0]} />
-              <CustomText label="DoctorId " value={String(doctorData[1])} />
-              <CustomText label="Doctor Name" value={doctorData[2]} />
-              <CustomText label="BMDC Number" value={String(doctorData[5])} />
+              <View style={{
+                flexDirection: 'row',         // Aligns buttons in a row
+                justifyContent: 'space-between',     // Centers buttons horizontally
+                alignItems: 'center',         // Centers buttons vertically
+
+              }}>
+                <ProfilePicture userData={doctorData?.[8]} height={150} width={119} borderRadius={20} />
+                <View>
+                  <CustomText label="Account " value={doctorData[0]} />
+                  <CustomText label="DoctorId " value={String(doctorData[1])} />
+                  <CustomText label="Doctor Name" value={ethers.utils.parseBytes32String(doctorData[2])} />
+                  <CustomText label="BMDC Number" value={String(doctorData[5])} />
+                </View>
+              </View>
             </>
           ) : (
             <ActivityIndicator />
           )}
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+    </View>
   );
 };
 

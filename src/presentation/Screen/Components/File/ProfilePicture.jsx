@@ -12,9 +12,9 @@ import FastImage from 'react-native-fast-image';
 
 const mime = require('mime');
 
-const ProfilePicture = ({ userData }) => {
+const ProfilePicture = ({ userData, height, width, borderRadius }) => {
 
-  const { setPploader,smartAccount } = useContext(HealthContext);
+  const { setPploader, smartAccount } = useContext(HealthContext);
   const [ipfsFile, setIPFSFile] = useState('');
   const profilePic = userData;
   console.log('profilePic3', profilePic);
@@ -25,7 +25,7 @@ const ProfilePicture = ({ userData }) => {
   };
 
   useEffect(() => {
-    if (profilePic !== undefined && profilePic !== null) { 
+    if (profilePic !== undefined && profilePic !== null) {
       showProfile();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,19 +69,19 @@ const ProfilePicture = ({ userData }) => {
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         const imgHash = `ipfs://${resFile.data.IpfsHash}`;
         const contract = await Contract.fetchContract()
-    const tx = await contract.populateTransaction.addProfilePic( imgHash)
-      const tx1 = {
-        to: contractAddress,
-        data: tx?.data,
-      };
-      const userOpResponse = await smartWallet?.sendTransaction(tx1, {
-        paymasterServiceData: { mode: PaymasterMode.SPONSORED },
-      });
-      console.log('userOpResponse',userOpResponse)
-      
+        const tx = await contract.populateTransaction.addProfilePic(imgHash)
+        const tx1 = {
+          to: contractAddress,
+          data: tx?.data,
+        };
+        const userOpResponse = await smartWallet?.sendTransaction(tx1, {
+          paymasterServiceData: { mode: PaymasterMode.SPONSORED },
+        });
+        console.log('userOpResponse', userOpResponse)
+
         // addProfilePic(imgHash, smartAccount);
-        
-        
+
+
         setPploader(false);
         Alert.alert('Successfully set profile pic');
       } catch (error) {
@@ -96,12 +96,32 @@ const ProfilePicture = ({ userData }) => {
 
   return (
     <View>
-      <View>
+      {(height && width && borderRadius) ? <View>
+        {file ? (
+          <FastImage
+            source={{ uri: file.uri }}
+            style={{ height: height, width: width, borderRadius: borderRadius }}
+          />
+        ) : profilePic === '' || profilePic === undefined || profilePic === null ? (
+          <FastImage
+            source={require('../../../../../assets/icon.png')}
+            style={{ height: height, width: 130, borderRadius: 65 }}
+          />
+        ) : ipfsFile === null ? setPploader(true) : (
+          <FastImage
+            source={{
+              uri: `https://gateway.pinata.cloud/ipfs${ipfsFile.substring(6)}`,
+            }}
+            style={{ height: height, width: width, borderRadius: borderRadius }}
+            resizeMode="contain"
+          />
+        )}
+      </View> : <View>
         <TouchableOpacity onPress={handleFilePick}>
           {file ? (
-            <FastImage 
+            <FastImage
               source={{ uri: file.uri }}
-              style={{ height: 130, width: 130, borderRadius: 65 }}
+              style={{ height: height, width: width, borderRadius: borderRadius }}
             />
           ) : profilePic === '' || profilePic === undefined || profilePic === null ? (
             <FastImage
@@ -120,7 +140,9 @@ const ProfilePicture = ({ userData }) => {
         </TouchableOpacity>
 
         {console.log('ipfs', ipfsFile)}
-      </View>
+      </View>}
+
+
     </View>
   );
 };

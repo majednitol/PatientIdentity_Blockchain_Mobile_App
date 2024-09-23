@@ -830,7 +830,7 @@ export default function Dashboard() {
           <Drawer.Screen
             name="Home"
             options={{
-              drawerLabel: 'Person Info',
+              drawerLabel: 'Personal Info',
               title: 'Person Info',
               drawerIcon: () => (
                 <Icon

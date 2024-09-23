@@ -9,7 +9,7 @@ import Web3Auth, {
   OPENLOGIN_NETWORK,
 } from '@web3auth/react-native-sdk';
 import { HealthContext } from '../../logic/context/health';
-import { Button } from 'react-native-paper';
+import { Button, Text } from 'react-native-paper';
 import SignUpComponent from '../../presentation/Screen/signup/SignUpComponent';
 
 import Contract from '../../data/repository/contract/contractRepo';
@@ -186,47 +186,115 @@ const ConnectWallet = () => {
   const unloggedInView = (
 
 
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: "#F6F6F6" }}>
+      <Image style={{marginBottom:130}}
+            source={require('../../../assets/Logo.png')} // Replace with your Google logo image
+      />
+      <Text style={{fontSize:24,fontWeight:'bold',marginBottom:20,color:"#000000"}}>
+      Sign in Using
+      </Text>
+      <Button labelStyle={{
+        color: "black",
+        fontSize: 16
+      }}
         icon={({ color, size }) => (
           <Image
-            source={require('../../../assets/Google.png')} // Replace with your Google logo image
-            style={{ width: size, height: size, tintColor: color }}
+            source={require('../../../assets/XMLID_28_.png')} // Replace with your Google logo image
+            style={{ width: size, height: size }}
           />
         )}
         mode="outlined"
         onPress={() => login('google')}
-        style={{ marginBottom: 10 }}
+        contentStyle={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',          // Centers content vertically
+          width: 312,
+          height: 56,
+          backgroundColor: "#FFFFFF"      // Button size
+        }}
+        style={{
+          marginBottom: 10,
+          borderRadius: 8,               // Makes the 
+          borderColor: 'black',          // Optional: Adds border color
+          borderWidth: 1,                // Optional: Border width
+        }}
       >
-        Login with Google
+        Google
       </Button>
+      <Text style={{color:"#000000"}}>Or</Text>
 
-      <Button
-        icon={({ color }) => (
+      <View style={{
+        flexDirection: 'row',         // Aligns buttons in a row
+    justifyContent: 'center',     // Centers buttons horizontally
+    alignItems: 'center',         // Centers buttons vertically
+    marginTop: 20, 
+      }}>
+      <Button labelStyle={{
+        color: "black",
+        fontSize: 16
+      }}
+        icon={({ color, size }) => (
           <Image
-            source={require('../../../assets/email.png')} // Replace with your email logo image
-            style={{ width: 30, height: 30, tintColor: color }}
+            source={require('../../../assets/mail.png')} // Replace with your email logo image
+            style={{ width: size, height: size, }}
           />
         )}
         mode="outlined"
         onPress={() => login('auth0emailpasswordless')}
-        style={{ marginBottom: 10 }}
+        contentStyle={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',          // Centers content vertically
+          width: 148,
+          height: 56,
+          backgroundColor: "#FFFFFF",
+          // Button size
+        }}
+        style={{
+          marginBottom: 10,
+          borderRadius: 8,               // Makes the 
+          borderColor: 'black',          // Optional: Adds border color
+          borderWidth: 1,
+          marginRight:10// Optional: Border width
+        }}
       >
-        Email Passwordless
+        Email
       </Button>
 
-      <Button
+      <Button labelStyle={{
+        color: "black",
+        fontSize: 16
+      }}
         icon={({ color, size }) => (
           <Image
-            source={require('../../../assets/github.png')} // Replace with your GitHub logo image
-            style={{ width: size, height: size, tintColor: color }}
+            source={require('../../../assets/mingcute_github-fill.png')} // Replace with your GitHub logo image
+            style={{ width: size, height: size }}
+            
           />
+          
         )}
         mode="outlined"
         onPress={() => login('auth0github')}
+        contentStyle={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',          // Centers content vertically
+          width: 148,
+          height: 56,
+          backgroundColor: "#FFFFFF"      // Button size
+        }}
+        style={{
+          marginBottom: 10,
+          borderRadius: 8,               // Makes the 
+          borderColor: 'black',
+          marginLeft:10,// Optional: Adds border color
+          borderWidth: 1,                // Optional: Border width
+        }}
       >
-        Login with GitHub
+        GitHub
       </Button>
+     </View>
     </View>
   );
   return (
@@ -244,7 +312,7 @@ const ConnectWallet = () => {
         (connectedUserType) === '3' ||
         (connectedUserType) === '4' ||
         (connectedUserType) === '5' ||
-        (connectedUserType) === '6'? (
+        (connectedUserType) === '6' ? (
         <Dashboard />
       ) : (connectedUserType) === '0' ? (
         <SignUpComponent />

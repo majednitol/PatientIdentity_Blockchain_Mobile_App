@@ -2,23 +2,25 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, RefreshControl, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, RefreshControl, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
 import { Card, Text, useTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDoctorData, fetchPatientDataFromDoctor, getDoctorAnotherData } from '../../../../../logic/redux/doctor/DoctorSlice';
 
- import { fetchPatientData } from '../../../../../logic/redux/patient/PatientSlice';
+import { fetchPatientData } from '../../../../../logic/redux/patient/PatientSlice';
 import { useNavigation } from '@react-navigation/native';
+import { ethers } from 'ethers';
+import ProfilePicture from '../../File/ProfilePicture';
 
 const DoctorPersonalPatientList = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { doctorAnotherData,loading } = useSelector((state) => state.doctor);
+  const { doctorAnotherData, loading } = useSelector((state) => state.doctor);
   const [patientDataArray, setPatientDataArray] = useState([]);
-const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     dispatch(getDoctorAnotherData());
@@ -36,18 +38,20 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
           });
           const patientDataArray = await Promise.all(dataPromises);
           console.log('patientDataArray', patientDataArray)
-          // dispatch(fetchPatientDataFromDoctor(doctor));
+
           setPatientDataArray(patientDataArray.map(data => data.payload));
         }
+        setIsDataLoaded(true);
       }
-      
+
     };
     fetchData();
   }, [loading, doctorAnotherData]);
 
   const onRefresh = () => {
     setRefreshing(true);
-    
+    dispatch(getDoctorAnotherData());
+    setIsDataLoaded(false);
     setRefreshing(false);
   };
 
@@ -57,22 +61,22 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Animated.View entering={FadeInDown.springify()} exiting={FadeInUp.springify()}>
-          {loading ? (
+          {loading && !isDataLoaded ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size={40} animating={true} color={theme.colors.blueA400} />
             </View>
           ) : (
             <>
-              {patientDataArray.length > 0 ? (
+              {isDataLoaded && patientDataArray.length === 0 ? (
+                <Card style={{ marginTop: 20 }}>
+                  <Card.Content>
+                    <Text style={styles.title}>No Patient data available</Text>
+                  </Card.Content>
+                </Card>
+              ) : (
                 patientDataArray.map((patientData, index) => (
                   <PatientCard key={index} patientData={patientData} />
                 ))
-              ) : (
-                <Card style={{ marginTop: 20 }}>
-                  <Card.Content>
-                    <Text style={styles.title}>No doctor data available</Text>
-                  </Card.Content>
-                </Card>
               )}
             </>
           )}
@@ -87,54 +91,64 @@ const PatientCard = ({ patientData }) => {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-  
+
   // const [doctorDataArray, setDoctorDataArray] = useState([]);
   const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const fetchData2 = async () => {
-    if ( patientData?.length > 0) {
-     
+    if (patientData?.length > 0) {
+
       const patientDataFromDoctor =
-         dispatch(fetchPatientDataFromDoctor(patientData[0]));
-      
-         patientDataFromDoctor.then((response) => {
-          // Access the payload array
-           const payloadArray = response.payload;
-           if (payloadArray!==null) {
-            navigation.navigate('DisplayFile', { imageUrls: payloadArray });
-         }
-          
-          console.log('patientDataFromDoctorpayloadArray',payloadArray);
-        }).catch((error) => {
-          console.error('Error fetching doctor data:', error);
-        });
-  }
-    
+        dispatch(fetchPatientDataFromDoctor(patientData[0]));
+
+      patientDataFromDoctor.then((response) => {
+        // Access the payload array
+        const payloadArray = response.payload;
+        if (payloadArray !== null) {
+          navigation.navigate('DisplayFile', { imageUrls: payloadArray });
+        }
+
+        console.log('patientDataFromDoctorpayloadArray', payloadArray);
+      }).catch((error) => {
+        console.error('Error fetching doctor data:', error);
+      });
+    }
+
   };
   //  useEffect(() => {
-   
-    
+
+
   // }, [ doctorData]);
   return (
-    <TouchableOpacity onPress={async () => {
-      await fetchData2();
-      // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
-      
-    }}>
-      <Card style={styles.card}>
+    <View >
+      <Card style={styles.card} onPress={async () => {
+        await fetchData2();
+
+
+      }}>
         <Card.Content>
           {patientData ? (
             <>
-            <CustomText label="Account" value={patientData[0]} />
-              <CustomText label="PatientId" value={String(patientData[1])} />
-              <CustomText label="Patient Name" value={patientData[2]} />
-              <CustomText label="Patient Gender" value={patientData[3]} />
+              <View style={{
+                flexDirection: 'row',         // Aligns buttons in a row
+                justifyContent: 'space-between',     // Centers buttons horizontally
+                alignItems: 'center',         // Centers buttons vertically
+
+              }}>
+                <ProfilePicture userData={patientData?.[10]} height={150} width={119} borderRadius={20} />
+                <View style={{ width: 171, height: 124, marginBottom: 20 }}>
+                  <CustomText label="Account" value={patientData[0]} />
+                  <CustomText label="PatientId" value={String(patientData[1])} />
+                  <CustomText label="Patient Name" value={ethers.utils.parseBytes32String(patientData[2])} />
+                  <CustomText label="Patient Gender" value={ethers.utils.parseBytes32String(patientData[3])} />
+                </View>
+              </View>
             </>
           ) : (
             <ActivityIndicator />
           )}
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -160,6 +174,7 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 10,
     elevation: 20,
+
   },
   title: {
     fontSize: 22,
@@ -167,13 +182,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   text: {
-    marginBottom: 10,
+    marginBottom: 2,
+    marginTop: 5
+    // lineHeight:14
   },
   label: {
     fontWeight: 'bold',
   },
   boldValue: {
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
   },
 });
 

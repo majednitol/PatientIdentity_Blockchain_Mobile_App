@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
-import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import { TextInput, Button, ActivityIndicator, MD2Colors } from 'react-native-paper';
+import { View, Text, TouchableOpacity, Alert, Image } from 'react-native';
+import { TextInput, Button, ActivityIndicator, MD2Colors, IconButton } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import { HealthContext } from '../../../../../logic/context/health';
 import { useNavigation } from '@react-navigation/native';
@@ -32,6 +32,12 @@ const SetPatientPersonalDetails = () => {
   const [location, setLocation] = useState('');
   const [errors, setErrors] = useState({});
   const [call, setCall] = useState(false);
+  const [showDropDown, setShowDropDown] = useState(false);
+  
+  const genderList = [
+    { label: 'male', value: 'male' },
+    { label: 'female', value: 'female' },
+  ];
   const getUser = useMemo(() => async () => {
     async function fetchUser() {
       if (!loading) {
@@ -116,8 +122,29 @@ const SetPatientPersonalDetails = () => {
   };
 
   return (
-    <ScrollView>
-      <ScrollView View style={{ marginHorizontal: 16 }}>
+    
+      <ScrollView  style={{ marginHorizontal: 16, backgroundColor:"#F6F6F6"}}>
+      <View style={{
+        flexDirection: 'row',         // Aligns buttons in a row
+    justifyContent: 'space-between',     // Centers buttons horizontally
+    alignItems: 'center',         // Centers buttons vertically
+          marginTop: 30,
+    marginBottom:10
+        }}>
+          <IconButton
+        icon="arrow-left"
+        size={28} iconColor='black'
+            onPress={() => {
+          navigation.goBack();
+        }}
+        style={{}}
+      />
+
+      <Image source={require('../../.././../../../assets/sub.png')} style={styles.logo} width={0} height={0}/>
+      </View>
+      
+
+      <Text style={{fontSize:24,fontWeight:"bold", color:"#000039", marginBottom:20}}>Create Your Account</Text>
         <TextInput
           style={{ marginVertical: 10 }}
           mode="outlined"
@@ -179,7 +206,7 @@ const SetPatientPersonalDetails = () => {
           <ActivityIndicator color="white" style={{ position: 'relative', top: height * (-0.077) }} />
         ) : null} */}
       </ScrollView>
-    </ScrollView>
+    
   );
 };
 
@@ -187,7 +214,7 @@ export default SetPatientPersonalDetails;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'rgb(108, 99, 255)',
+    backgroundColor: '#8D68F6',
     height: height * 0.05,
     width: width * 0.8,
     justifyContent: 'center',
@@ -196,4 +223,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginVertical: 30,
   },
+  
 });

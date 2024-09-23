@@ -12,13 +12,16 @@ import { fetchDoctorDataFromPathologist, getDoctorAnotherData } from '../../../.
 
 import { useNavigation } from '@react-navigation/native';
 import { fetchPathologistData } from '../../../../../logic/redux/pathologist/pathologistSlice1';
+import ProfilePicture from '../../File/ProfilePicture';
+import { ethers } from 'ethers';
 
-const DoctorToPathologist = () => {
+const DoctorFromPathologist = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { doctorAnotherData,loading } = useSelector((state) => state.doctor);
+  const { doctorAnotherData, loading } = useSelector((state) => state.doctor);
   const [pathologistDataArray, setPathologistDataArray] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
     dispatch(getDoctorAnotherData());
@@ -30,7 +33,7 @@ const DoctorToPathologist = () => {
       if (!loading && doctorAnotherData?.[3]?.length > 0) {
         if (typeof doctorAnotherData?.[3] === 'string') {
           dataArray = doctorAnotherData?.[3].split(',').map(item => item.trim());
-          console.log("dataArray",dataArray)
+          console.log("dataArray", dataArray)
           const dataPromises = dataArray?.map((pathoLogist) => {
             return dispatch(fetchPathologistData(pathoLogist));
           });
@@ -39,15 +42,17 @@ const DoctorToPathologist = () => {
           // dispatch(fetchPatientDataFromDoctor(doctor));
           setPathologistDataArray(pathologistDataArray.map(data => data.payload));
         }
+        setIsDataLoaded(true);
       }
-      
+
     };
     fetchData();
   }, [loading, doctorAnotherData]);
 
   const onRefresh = () => {
     setRefreshing(true);
-    
+    dispatch(getDoctorAnotherData());
+    setIsDataLoaded(false)
     setRefreshing(false);
   };
 
@@ -63,16 +68,16 @@ const DoctorToPathologist = () => {
             </View>
           ) : (
             <>
-              {pathologistDataArray.length > 0 ? (
-                pathologistDataArray.map((pathologistData, index) => (
-                  <PathoLogistCard key={index} pathologistData={pathologistData} />
-                ))
-              ) : (
+              {isDataLoaded && pathologistDataArray.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>Any pathologist has not sent any prescription yet</Text>
                   </Card.Content>
                 </Card>
+              ) : (
+                pathologistDataArray.map((pathologistData, index) => (
+                  <PathoLogistCard key={index} pathologistData={pathologistData} />
+                ))
               )}
             </>
           )}
@@ -87,54 +92,64 @@ const PathoLogistCard = ({ pathologistData }) => {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-  
+
   // const [doctorDataArray, setDoctorDataArray] = useState([]);
 
   const fetchData2 = async () => {
-    if ( pathologistData?.length > 0) {
-     
+    if (pathologistData?.length > 0) {
+
       const patientDataFromDoctor =
-         dispatch(fetchDoctorDataFromPathologist(pathologistData[0]));
-      
-         patientDataFromDoctor.then((response) => {
-          // Access the payload array
-           const payloadArray = response.payload;
-           if (payloadArray!==null) {
-            navigation.navigate('DisplayFile', { imageUrls: payloadArray });
-         }
-          
-          console.log('patientDataFromDoctorpayloadArray',payloadArray);
-        }).catch((error) => {
-          console.error('Error fetching doctor data:', error);
-        });
-  }
-    
+        dispatch(fetchDoctorDataFromPathologist(pathologistData[0]));
+
+      patientDataFromDoctor.then((response) => {
+        // Access the payload array
+        const payloadArray = response.payload;
+        if (payloadArray !== null) {
+          navigation.navigate('DisplayFile', { imageUrls: payloadArray });
+        }
+
+        console.log('patientDataFromDoctorpayloadArray', payloadArray);
+      }).catch((error) => {
+        console.error('Error fetching doctor data:', error);
+      });
+    }
+
   };
   //  useEffect(() => {
-   
-    
+
+
   // }, [ doctorData]);
   return (
-    <TouchableOpacity onPress={async () => {
-      await fetchData2();
-      // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
-      
-    }}>
-      <Card style={styles.card}>
+    <View>
+      <Card style={styles.card} onPress={async () => {
+        await fetchData2();
+        // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
+
+      }}>
         <Card.Content>
           {pathologistData ? (
             <>
-            <CustomText label="Account " value={pathologistData?.[0]} />
-                               <CustomText label="EmailAddress" value={''} />
-                              <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
-                               <CustomText label="Pathologist Name" value={pathologistData?.[2]} />
+              <View style={{
+                flexDirection: 'row',         // Aligns buttons in a row
+                justifyContent: 'space-between',     // Centers buttons horizontally
+                alignItems: 'center',         // Centers buttons vertically
+
+              }}>
+                <ProfilePicture userData={pathologistData?.[11]} height={150} width={119} borderRadius={20} />
+                <View>
+                  <CustomText label="Account " value={pathologistData?.[0]} />
+                  <CustomText label="EmailAddress" value={''} />
+                  <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
+                  <CustomText label="Pathologist Name" value={ethers.utils.parseBytes32String(pathologistData?.[2])} />
+                </View>
+              </View>
             </>
           ) : (
             <ActivityIndicator />
           )}
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+    </View>
   );
 };
 
@@ -177,7 +192,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DoctorToPathologist;
+export default DoctorFromPathologist;
 
 
 

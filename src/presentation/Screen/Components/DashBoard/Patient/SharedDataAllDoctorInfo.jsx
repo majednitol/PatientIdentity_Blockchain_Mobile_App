@@ -8,6 +8,8 @@ import { HealthContext } from '../../../../../logic/context/health';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatientData, getsharedAllDoctorAddress } from '../../../../../logic/redux/patient/PatientSlice';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
+import ProfilePicture from '../../File/ProfilePicture';
+import { ethers } from 'ethers';
 
 const SharedDataAllDoctorsInfo = () => {
     const theme = useTheme();
@@ -15,6 +17,7 @@ const SharedDataAllDoctorsInfo = () => {
     const { isLoading, reducerValue } = useContext(HealthContext);
     const [SharedDataAllDoctorAddress, setSharedDataAllDoctorAddress] = useState([]);
     const { patientData, sharedAllDoctorAddress } = useSelector((state) => state.patient);
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
     const fetchData = async () => {
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         console.log('saAddress7777', saAddress);
@@ -26,7 +29,7 @@ const SharedDataAllDoctorsInfo = () => {
         setRefreshing(true);
         fetchData();
         dispatch(getsharedAllDoctorAddress())
-
+        setIsDataLoaded(false)
         setRefreshing(false);
     };
     useEffect(() => {
@@ -38,6 +41,7 @@ const SharedDataAllDoctorsInfo = () => {
         if (!isLoading && Array.isArray(patientData)) {
             const allDoctorsAddress = sharedAllDoctorAddress.data;
             setSharedDataAllDoctorAddress(allDoctorsAddress || []);
+            isDataLoaded(true)
 
 
         }
@@ -55,16 +59,16 @@ const SharedDataAllDoctorsInfo = () => {
                         </View>
                     ) : (
                         <>
-                            {SharedDataAllDoctorAddress.length > 0 ? (
-                                SharedDataAllDoctorAddress.slice().reverse().map((userAddress, index) => (
-                                    <AllUserCard key={index} userAddress={userAddress} index={index} />
-                                ))
-                            ) : (
+                            {isDataLoaded && SharedDataAllDoctorAddress.length === 0 ? (
                                 <Card style={{ marginTop: 20 }}>
                                     <Card.Content>
                                         <Text style={styles.title}>You did't share your prescription anyone yet</Text>
                                     </Card.Content>
                                 </Card>
+                            ) : (
+                                SharedDataAllDoctorAddress.slice().reverse().map((userAddress, index) => (
+                                    <AllUserCard key={index} userAddress={userAddress} index={index} />
+                                ))
                             )}
                         </>
                     )}
@@ -97,13 +101,23 @@ const AllUserCard = ({ userAddress }) => {
             <Card.Content>
                 {userData ? (
                     <>
-                        <CustomText label="Account " value={userData.userAddress} />
-                        <CustomText label="DoctorId " value={String(userData[2])} />
-                        <CustomText label="Doctor Name" value={userData[3]} />
-                        <CustomText label=" Doctor Email Address" value={userData.emailAddress} />
-                        <Button onPress={() => { revokeAccess(userData.userAddress) }} mode='contained' style={styles.button} >
-                            Revoke Access
-                        </Button>
+                        <View style={{
+                            flexDirection: 'row',         // Aligns buttons in a row
+                            justifyContent: 'space-between',     // Centers buttons horizontally
+                            alignItems: 'center',         // Centers buttons vertically
+
+                        }}>
+                            <ProfilePicture userData={doctorData?.[8]} height={150} width={119} borderRadius={20} />
+                            <View>
+                                <CustomText label="Account " value={userData.userAddress} />
+                                <CustomText label="DoctorId " value={String(userData[2])} />
+                                <CustomText label="Doctor Name" value={ethers.utils.parseBytes32String(userData[3])} />
+                                <CustomText label=" Doctor Email Address" value={ethers.utils.parseBytes32String(userData.emailAddress)} />
+                                <Button onPress={() => { revokeAccess(userData.userAddress) }} mode='contained' style={styles.button} >
+                                    Revoke Access
+                                </Button>
+                            </View>
+                        </View>
                     </>
                 ) : (
                     <ActivityIndicator />

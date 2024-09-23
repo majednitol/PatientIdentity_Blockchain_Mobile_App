@@ -16,7 +16,7 @@ import { Alert } from 'react-native';
 import SmartAccount from '../../../../service/wallet connect/SmartAccount';
 // import { deletePrescription } from '../../../../logic/redux/doctor/DoctorSlice';
 const { width, height } = Dimensions.get('window');
-
+const [isDataLoaded, setIsDataLoaded] = useState(false);
 const QRCodeGenerator = ({ url, onClose }) => {
     return (
         <Modal visible={true} transparent={true} >
@@ -41,7 +41,7 @@ const QRCodeGenerator = ({ url, onClose }) => {
 const DisplayFile = ({ userData, route }) => {
     const { ConnectedAccountUser, reducerValue, anotherUser, isDbVisiable, setIsDbVisiable, downloadProgress, setDownloadProgress, userAddress, setUserAddress } = useContext(HealthContext);
     const dispatch = useDispatch();
-
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
     const { connectedUserType } = useSelector((state) => state.connectedUser);
 
     const { success, deleteLoader, error } = useSelector((state) => state.patient);
@@ -71,10 +71,10 @@ const DisplayFile = ({ userData, route }) => {
         try {
             let dataArray = userData || imageUrls;
             console.log("dataArray", dataArray);
-            
+
             if (typeof userData === 'string' || typeof imageUrls === 'string') {
                 if (userData) {
-                    dataArray = userData?.split(',').map(item => item.trim()); 
+                    dataArray = userData?.split(',').map(item => item.trim());
                 } else if (imageUrls) {
                     dataArray = imageUrls?.split(',').map(item => item.trim());
                 }
@@ -108,6 +108,7 @@ const DisplayFile = ({ userData, route }) => {
                 </View>
             ));
             setImages(imageComponents);
+            setIsDataLoaded(true);
         } catch (error) {
             console.log(error);
         }
@@ -167,7 +168,7 @@ const DisplayFile = ({ userData, route }) => {
                             <Button mode="text" style={{ paddingLeft: 5 }} disabled={curPage === Math.ceil(images.length / 9) - 1} onPress={goToNextPage}>Next</Button>
                         </View>
                     </>
-                ) : images.length === 0 ? (
+                ) : isDataLoaded && images.length === 0 ? (
                     <Text>No Prescription to display</Text>
                 ) : (
                     <ActivityIndicator

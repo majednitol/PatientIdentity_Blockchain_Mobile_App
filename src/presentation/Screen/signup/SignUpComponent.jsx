@@ -46,8 +46,9 @@ const SignUpComponent = () => {
         )
       })}
     >
-      <Stack.Screen name="SignUp Screen" component={PrimaryScreen} />
+      <Stack.Screen name="SignUp Screen" component={PrimaryScreen} options={{ headerShown: false }} />
       <Stack.Screen
+        options={{ headerShown: false }}
         name="Patient SignUp Screen"
         component={SetPatientPersonalDetails}
       />

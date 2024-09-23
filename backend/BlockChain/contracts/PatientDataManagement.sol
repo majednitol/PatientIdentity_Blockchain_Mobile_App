@@ -7,8 +7,8 @@ contract PatientIdentity {
     address public ownerAddress;
 
     constructor() {
-        // ownerAddress = msg.sender;
-        ownerAddress = 0x26d7d75D65c21F54ed897A800ef0D4D4767701a1;
+        ownerAddress = msg.sender;
+        // ownerAddress = 0x26d7d75D65c21F54ed897A800ef0D4D4767701a1;
     }
 
     struct commonData {
@@ -43,9 +43,7 @@ contract PatientIdentity {
         bytes32 emailAddress;
         uint256 age;
         bytes32 location;
-
- EnumerableSet.AddressSet  PatientToAdmin; //zzz
-
+        EnumerableSet.AddressSet PatientToAdmin; //zzz
     }
     struct AdminView {
         address AdminAddress;
@@ -62,14 +60,16 @@ contract PatientIdentity {
         bytes32 location;
     }
     AdminData ad;
-struct ShareData{
-    EnumerableSet.AddressSet sharedAllUsersAddress;
-}
-ShareData sd;
+    struct ShareData {
+        EnumerableSet.AddressSet sharedAllUsersAddress;
+    }
+    ShareData sd;
+
     function getAdminData() public view returns (AdminData memory) {
         return ad;
     }
 
+    uint256 public transactionCount;
     EnumerableSet.AddressSet private allAdmins;
     uint256 public numberOfConfirmations;
     mapping(address => bool) public isConfirmed;
@@ -91,10 +91,18 @@ ShareData sd;
         string profilePic;
         bytes32 birthday;
         bytes32 emailAddress;
-         EnumerableSet.AddressSet  sharedAllDoctorAddress;
-         EnumerableSet.AddressSet  personalDoctor; //zzz
-
+        EnumerableSet.AddressSet sharedAllDoctorAddress;
+        EnumerableSet.AddressSet personalDoctor; //zzz
     }
+    struct Transaction {
+        address from;
+        address to;
+        bool executed;
+        uint256 confirmations;
+    }
+    EnumerableSet.AddressSet pendingTx;
+
+    mapping(address => Transaction) public transactions;
     struct PatientView {
         address patientAddress;
         uint256 patientID;
@@ -111,28 +119,25 @@ ShareData sd;
         bytes32 emailAddress;
     }
 
-
-    function getPatientToAdmin(address userAddress
+    function getPatientToAdmin(
+        address userAddress
     ) public view returns (address[] memory) {
         return admin[userAddress].PatientToAdmin.values();
     }
 
-    function getPersonalDoctor(address userAddress) public view returns (address[] memory) {
+    function getPersonalDoctor(
+        address userAddress
+    ) public view returns (address[] memory) {
         return patients[userAddress].personalDoctor.values();
     }
 
     // EnumerableSet.AddressSet sharedAllDoctorAndAdminAddress;
- 
 
-    function getsharedAllDoctorAddress(address userAddress)
-        public
-        view
-        returns (address[] memory)
-    {
+    function getsharedAllDoctorAddress(
+        address userAddress
+    ) public view returns (address[] memory) {
         return patients[userAddress].sharedAllDoctorAddress.values();
     }
-
-  
 
     function getsharedAllUsersAddress() public view returns (address[] memory) {
         return sd.sharedAllUsersAddress.values();
@@ -206,10 +211,9 @@ ShareData sd;
         bytes32 userType;
         string profilePic;
         bytes32 emailAddress;
-      EnumerableSet.AddressSet adminToMedRcLab;  //vvv
-
+        EnumerableSet.AddressSet adminToMedRcLab; //vvv
     }
-        struct MedicalResearchLabView {
+    struct MedicalResearchLabView {
         address labAddress;
         uint256 labID;
         bytes32 name;
@@ -222,9 +226,12 @@ ShareData sd;
         string profilePic;
         bytes32 emailAddress;
     }
+
     // EnumerableSet.AddressSet adminToMedRcLab;
 
-    function getadminToMedRcLab(address userAddress) public view returns (address[] memory) {
+    function getadminToMedRcLab(
+        address userAddress
+    ) public view returns (address[] memory) {
         return medicalResearchLabs[userAddress].adminToMedRcLab.values();
     }
 
@@ -241,7 +248,7 @@ ShareData sd;
         string[] TopMedichine;
         string profilePic;
         bytes32 emailAddress;
-     EnumerableSet.AddressSet  adminToPharmacy;
+        EnumerableSet.AddressSet adminToPharmacy;
     }
     struct PharmacyCompanyView {
         address pharmacyCompanyAddress;
@@ -256,13 +263,14 @@ ShareData sd;
         string profilePic;
         bytes32 emailAddress;
     }
+
     // EnumerableSet.AddressSet adminToPharmacy;
 
-
-    function getAdminToPharmacy(address userAddress) public view returns (address[] memory) {
+    function getAdminToPharmacy(
+        address userAddress
+    ) public view returns (address[] memory) {
         return pharmacyCompanies[userAddress].adminToPharmacy.values();
     }
-
 
     struct subscriptionTX {
         string[] transactions; // Stores a list of subscription transactions
@@ -271,6 +279,8 @@ ShareData sd;
     // Mapping to store expiration time for data
 
     mapping(address => uint256) public subscriptionExpiration;
+    mapping(address => uint256) public totalSubscription;
+
     mapping(address => uint256) public accounts;
     mapping(address => Patient) private patients;
     mapping(address => Doctor) private doctors;
@@ -304,9 +314,11 @@ ShareData sd;
         uint256 currentTime = block.timestamp;
         subscriptionTXlist[msg.sender].transactions.push(TX);
         if (subscriptionExpiration[msg.sender] > currentTime) {
+            totalSubscription[msg.sender] += 31536000;
             subscriptionExpiration[msg.sender] += 31536000;
         } else {
             subscriptionExpiration[msg.sender] = currentTime + 31536000;
+            totalSubscription[msg.sender] += 31536000;
         }
     }
 
@@ -325,12 +337,13 @@ ShareData sd;
     )
         external
         view
-        returns (bool isSubscription, uint256 expiration, uint256 daysLeft)
+        returns (bool isSubscription, uint256 total, uint256 daysLeft)
     {
         if (subscriptionExpiration[subscriber] > block.timestamp) {
-            expiration = subscriptionExpiration[subscriber];
+            uint256 expiration = subscriptionExpiration[subscriber];
             daysLeft = (expiration - block.timestamp) / 86400;
-            return (true, expiration, daysLeft);
+            total = totalSubscription[msg.sender] / 31536000;
+            return (true, total, daysLeft);
         } else {
             return (false, 0, 0);
         }
@@ -563,47 +576,48 @@ ShareData sd;
     function getPatient(
         address _patientAddress
     ) public view returns (PatientView memory) {
-        
         assert(patients[_patientAddress].isAdded);
         Patient storage patient = patients[_patientAddress];
-                return PatientView(
-            patient.patientAddress,
-            patient.patientID,
-            patient.name,
-            patient.gender,
-            patient.age,
-            patient.location,
-            patient.isAdded,
-            patient.userType,
-            patient.imgUrl,
-            patient.patientPersonalData,
-            patient.profilePic,
-            patient.birthday,
-            patient.emailAddress
-        );
+        return
+            PatientView(
+                patient.patientAddress,
+                patient.patientID,
+                patient.name,
+                patient.gender,
+                patient.age,
+                patient.location,
+                patient.isAdded,
+                patient.userType,
+                patient.imgUrl,
+                patient.patientPersonalData,
+                patient.profilePic,
+                patient.birthday,
+                patient.emailAddress
+            );
     }
 
     function getAdmin(
         address _adminAddress
     ) public view returns (AdminView memory) {
         assert(admin[_adminAddress].isAdded);
-         Admin storage admind = admin[_adminAddress];
+        Admin storage admind = admin[_adminAddress];
 
         // Return the struct without mappings
-        return AdminView(
-            admind.AdminAddress,
-            admind.adminID,
-            admind.name,
-            admind.gender,
-            admind.profilePic,
-            admind.allPrescription,
-            admind.isAdded,
-            admind.userType,
-            admind.birthday,
-            admind.emailAddress,
-            admind.age,
-            admind.location
-        );
+        return
+            AdminView(
+                admind.AdminAddress,
+                admind.adminID,
+                admind.name,
+                admind.gender,
+                admind.profilePic,
+                admind.allPrescription,
+                admind.isAdded,
+                admind.userType,
+                admind.birthday,
+                admind.emailAddress,
+                admind.age,
+                admind.location
+            );
     }
 
     function setAdmin(
@@ -636,13 +650,47 @@ ShareData sd;
         allAdmins.add(user);
     }
 
-    function giveConfirmation(address _address) public onlyAdmin {
-        require(isAdmin(_address), 'Address is not an admin');
-        require(isAddressInAllAdmins(_address), 'Address is not in allAdmins');
-        require(!isConfirmed[_address], 'Address is already confirmed');
+    function giveConfirmation(address user) public onlyAdmin {
+        require(isAdmin(msg.sender), 'Address is not an admin');
+        require(
+            isAddressInAllAdmins(msg.sender),
+            'Address is not in allAdmins'
+        );
+        require(!isConfirmed[msg.sender], 'Address is already confirmed');
+        require(pendingTx.contains(user), 'This user not have any transaction');
+        require(
+            !transactions[user].executed,
+            'transaction is already confirmed'
+        );
 
-        isConfirmed[_address] = true;
-        numberOfConfirmations++;
+        if (transactions[user].confirmations == allAdmins.length()) {
+            address useraddress = transactions[user].to;
+            if (
+                accounts[useraddress] == uint256(EntityType.MedicalResearchLab)
+            ) {
+                medicalResearchLabs[useraddress].adminToMedRcLab.add(
+                    msg.sender
+                );
+                sd.sharedAllUsersAddress.add(useraddress);
+                isConfirmed[msg.sender] = true;
+                transactions[useraddress].executed = true;
+                pendingTx.remove(useraddress);
+                isConfirmed[msg.sender] = false;
+            } else if (
+                accounts[useraddress] == uint256(EntityType.PharmacyCompany)
+            ) {
+                pharmacyCompanies[useraddress].adminToPharmacy.add(msg.sender);
+                sd.sharedAllUsersAddress.add(useraddress);
+                isConfirmed[msg.sender] = true;
+                transactions[useraddress].executed = true;
+                pendingTx.remove(useraddress);
+                isConfirmed[msg.sender] = false;
+            } else {
+                revert('only transaction execute for pharma and medi');
+            }
+        } else {
+            transactions[user].confirmations++;
+        }
     }
 
     function isAdmin(address _address) public view returns (bool) {
@@ -791,7 +839,9 @@ ShareData sd;
                     revert('Data already shared  with this doctor');
                 } else {
                     doctor.PatientToDoctor.add(msg.sender);
-                    patients[msg.sender].sharedAllDoctorAddress.add(useraddress);
+                    patients[msg.sender].sharedAllDoctorAddress.add(
+                        useraddress
+                    );
                 }
             } else if (accounts[ownerAddress] == uint256(EntityType.Admin)) {
                 bool alreadyShared = false;
@@ -805,11 +855,11 @@ ShareData sd;
                 } else {
                     admin[ownerAddress].PatientToAdmin.add(msg.sender);
                     string[] storage url = patients[msg.sender].imgUrl;
-                    if (admin[ownerAddress].allPrescription.length == 0) {
-                        admin[ownerAddress].allPrescription = new string[](
-                            url.length
-                        );
-                    }
+                    // if (admin[ownerAddress].allPrescription.length == 0) {
+                    //     admin[ownerAddress].allPrescription = new string[](
+                    //         url.length
+                    //     );
+                    // }
                     for (uint256 i = 0; i < url.length; i++) {
                         admin[ownerAddress].allPrescription.push(url[i]);
                     }
@@ -818,20 +868,26 @@ ShareData sd;
                 revert('Invalid entity or transfer not allowed');
             }
         } else if (accounts[msg.sender] == uint256(EntityType.Admin)) {
-            // require(
-            //     ownerAddress == msg.sender,
-            //     'Only owner can share this data'
-            // );
-            // require(
-            //     allAdmins.length() - 1 == numberOfConfirmations,
-            //     'All admin need to be confirmed before you can share'
-            // );
+            require(
+                ownerAddress == msg.sender,
+                'Only owner can share this data'
+            );
+
+            require(
+                !pendingTx.contains(useraddress),
+                'transacaction already submitted'
+            );
+
             if (
                 accounts[useraddress] == uint256(EntityType.MedicalResearchLab)
             ) {
                 bool alreadyShared = false;
 
-                if (medicalResearchLabs[useraddress].adminToMedRcLab.contains(msg.sender)) {
+                if (
+                    medicalResearchLabs[useraddress].adminToMedRcLab.contains(
+                        msg.sender
+                    )
+                ) {
                     alreadyShared = true;
                 }
 
@@ -840,23 +896,41 @@ ShareData sd;
                         'Data already shared with this medical research lab'
                     );
                 } else {
-                    medicalResearchLabs[useraddress].adminToMedRcLab.add(msg.sender);
-                    sd.sharedAllUsersAddress.add(useraddress);
+                    transactions[useraddress] = Transaction({
+                        from: msg.sender,
+                        to: useraddress,
+                        executed: false,
+                        confirmations: 0
+                    });
+                    pendingTx.add(useraddress);
+                    // medicalResearchLabs[useraddress].adminToMedRcLab.add(msg.sender);
+                    // sd.sharedAllUsersAddress.add(useraddress);
                 }
             } else if (
                 accounts[useraddress] == uint256(EntityType.PharmacyCompany)
             ) {
                 bool alreadyShared = false;
 
-                if (pharmacyCompanies[useraddress].adminToPharmacy.contains(msg.sender)) {
+                if (
+                    pharmacyCompanies[useraddress].adminToPharmacy.contains(
+                        msg.sender
+                    )
+                ) {
                     alreadyShared = true;
                 }
 
                 if (alreadyShared) {
                     revert('Data already shared with this pharmacy company');
                 } else {
-                    pharmacyCompanies[useraddress].adminToPharmacy.add(msg.sender);
-                    sd.sharedAllUsersAddress.add(useraddress);
+                    transactions[useraddress] = Transaction({
+                        from: msg.sender,
+                        to: useraddress,
+                        executed: false,
+                        confirmations: 0
+                    });
+                    pendingTx.add(useraddress);
+                    // pharmacyCompanies[useraddress].adminToPharmacy.add(msg.sender);
+                    // sd.sharedAllUsersAddress.add(useraddress);
                 }
             } else {
                 revert('Invalid entity or transfer not allowed');
@@ -975,22 +1049,25 @@ ShareData sd;
     ) public view returns (PharmacyCompanyView memory) {
         assert(pharmacyCompanies[_pharmacyCompanyAddress].isAdded);
 
-         PharmacyCompany storage pharmacy = pharmacyCompanies[_pharmacyCompanyAddress];
+        PharmacyCompany storage pharmacy = pharmacyCompanies[
+            _pharmacyCompanyAddress
+        ];
 
         // Return the struct without the EnumerableSet
-        return PharmacyCompanyView(
-            pharmacy.pharmacyCompanyAddress,
-            pharmacy.companyID,
-            pharmacy.name,
-            pharmacy.licenseID,
-            pharmacy.productInformation,
-            pharmacy.pharmacyRating,
-            pharmacy.isAdded,
-            pharmacy.userType,
-            pharmacy.TopMedichine,
-            pharmacy.profilePic,
-            pharmacy.emailAddress
-        );
+        return
+            PharmacyCompanyView(
+                pharmacy.pharmacyCompanyAddress,
+                pharmacy.companyID,
+                pharmacy.name,
+                pharmacy.licenseID,
+                pharmacy.productInformation,
+                pharmacy.pharmacyRating,
+                pharmacy.isAdded,
+                pharmacy.userType,
+                pharmacy.TopMedichine,
+                pharmacy.profilePic,
+                pharmacy.emailAddress
+            );
     }
 
     function getMedicalResearchLab(
@@ -998,22 +1075,23 @@ ShareData sd;
     ) public view returns (MedicalResearchLabView memory) {
         assert(medicalResearchLabs[_labAddress].isAdded);
 
-         MedicalResearchLab storage lab = medicalResearchLabs[_labAddress];
+        MedicalResearchLab storage lab = medicalResearchLabs[_labAddress];
 
         // Return a struct without the EnumerableSet
-        return MedicalResearchLabView(
-            lab.labAddress,
-            lab.labID,
-            lab.name,
-            lab.licenseID,
-            lab.researchArea,
-            lab.labRating,
-            lab.isAdded,
-            lab.imgUrl,
-            lab.userType,
-            lab.profilePic,
-            lab.emailAddress
-        );
+        return
+            MedicalResearchLabView(
+                lab.labAddress,
+                lab.labID,
+                lab.name,
+                lab.licenseID,
+                lab.researchArea,
+                lab.labRating,
+                lab.isAdded,
+                lab.imgUrl,
+                lab.userType,
+                lab.profilePic,
+                lab.emailAddress
+            );
     }
 
     function setPatientPersonalData(
@@ -1104,11 +1182,15 @@ ShareData sd;
             if (
                 accounts[userAddress] == uint256(EntityType.MedicalResearchLab)
             ) {
-                medicalResearchLabs[userAddress].adminToMedRcLab.remove(msg.sender);
+                medicalResearchLabs[userAddress].adminToMedRcLab.remove(
+                    msg.sender
+                );
             } else if (
                 accounts[userAddress] == uint256(EntityType.PharmacyCompany)
             ) {
-                pharmacyCompanies[userAddress].adminToPharmacy.remove(msg.sender);
+                pharmacyCompanies[userAddress].adminToPharmacy.remove(
+                    msg.sender
+                );
             }
         }
     }

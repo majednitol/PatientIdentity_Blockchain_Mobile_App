@@ -8,6 +8,7 @@ import { HealthContext } from '../../../../../logic/context/health';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminData, getsharedAllUsersAddress } from '../../../../../logic/redux/admin/AdminSlice';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
+import { ethers } from 'ethers';
 
 const SharedDataAllUserInfo = () => {
     const theme = useTheme();
@@ -49,7 +50,7 @@ console.log('SharedDataAllUserAddress',sharedAllUsers.data)
                 <Animated.View entering={FadeInDown.springify()} exiting={FadeInUp.springify()}>
                     {isLoading ? (
                         <View style={styles.loadingContainer}>
-                            <ActivityIndicator size={40} animating={true} color={theme.colors.blueA400} />
+                            <ActivityIndicator size={40} animating={true} color={theme.colors.primary} />
                         </View>
                     ) : (
                         <>
@@ -96,11 +97,11 @@ const AllUserCard = ({ userAddress }) => {
                 {userData ? (
                     <>
 
-                        <CustomText label="UserType " value={userData[0]} />
+                        <CustomText label="UserType " value={ethers.utils.parseBytes32String(userData[0])} />
                         <CustomText label="Account " value={userData.userAddress} />
                         <CustomText label="UserId " value={String(userData[2])} />
-                        <CustomText label="User Name" value={userData[3]} />
-                        <CustomText label="Email Address" value={userData.emailAddress} />
+                        <CustomText label="User Name" value={ethers.utils.parseBytes32String(userData[3])} />
+                        <CustomText label="Email Address" value={ethers.utils.parseBytes32String(userData.emailAddress)} />
                         <Button onPress={() => { revokeAccess(userData.userAddress) }} mode='contained' style={styles.button} >
                             Revoke Access
                         </Button>

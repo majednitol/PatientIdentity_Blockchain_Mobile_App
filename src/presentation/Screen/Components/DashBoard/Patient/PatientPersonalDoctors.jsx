@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchPatientDataFromDoctor, getPersonalDoctor } from '../../../../../logic/redux/patient/PatientSlice';
 import { fetchDoctorData } from '../../../../../logic/redux/doctor/DoctorSlice';
 import { useNavigation } from '@react-navigation/native';
+import ProfilePicture from '../../File/ProfilePicture';
+import { ethers } from 'ethers';
 
 const PatientPersonalDoctors = () => {
   const theme = useTheme();
@@ -18,10 +20,9 @@ const PatientPersonalDoctors = () => {
   const [doctorDataArray, setDoctorDataArray] = useState([]);
 const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   useEffect(() => {
     dispatch(getPersonalDoctor());
-    console.log("personalDoctor",personalDoctor)
   }, [dispatch]);
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
         console.log('doctorDataArray', doctorDataArray)
         // dispatch(fetchPatientDataFromDoctor(doctor));
         setDoctorDataArray(doctorDataArray.map(data => data.payload));
+        setIsDataLoaded(true);
         
       }
       
@@ -43,7 +45,8 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
 
   const onRefresh = () => {
     setRefreshing(true);
-    
+    dispatch(getPersonalDoctor());
+    isDataLoaded(false)
     setRefreshing(false);
   };
 
@@ -60,17 +63,17 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
 
           ) : (
             <>
-              {doctorDataArray.length > 0 ? (
-                doctorDataArray.map((doctorData, index) => (
-                  <DoctorCard key={index} doctorData={doctorData} />
-                ))
-              ) : (
+              {isDataLoaded&& doctorDataArray.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>No doctor data available</Text>
                   </Card.Content>
                 </Card>
-              )}
+              ) :(
+                doctorDataArray.map((doctorData, index) => (
+                  <DoctorCard key={index} doctorData={doctorData} />
+                ))
+              ) }
             </>
           )}
         </Animated.View>
@@ -112,26 +115,36 @@ const DoctorCard = ({ doctorData }) => {
     
   }, [ doctorData]);
   return (
-    <TouchableOpacity onPress={async () => {
+  <View>
+      <Card style={styles.card} onPress={async () => {
       await fetchData2();
       // console.log("patientDataFromDoctorArray657",patientDataFromDoctorArray)
       
     }}>
-      <Card style={styles.card}>
         <Card.Content>
           {doctorData ? (
             <>
-              <CustomText label="Account " value={doctorData[0]} />
+            <View style={{
+                flexDirection: 'row',         // Aligns buttons in a row
+                justifyContent: 'space-between',     // Centers buttons horizontally
+                alignItems: 'center',         // Centers buttons vertically
+
+              }}>
+                <ProfilePicture userData={doctorData?.[8]} height={150} width={119} borderRadius={20} />  
+                <View>
+                <CustomText label="Account " value={doctorData[0]} />
               <CustomText label="DoctorId " value={String(doctorData[1])} />
-              <CustomText label="Doctor Name" value={doctorData[2]} />
-              <CustomText label="BMDC Number" value={String(doctorData[5])} />
+              <CustomText label="Doctor Name" value={ethers.utils.parseBytes32String(doctorData[2])} />
+                <CustomText label="BMDC Number" value={String(doctorData[5])} />
+              </View>
+                </View>
             </>
           ) : (
             <ActivityIndicator />
           )}
         </Card.Content>
       </Card>
-    </TouchableOpacity>
+      </View>
   );
 };
 

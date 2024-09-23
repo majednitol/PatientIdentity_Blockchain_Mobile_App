@@ -5,21 +5,57 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Image,
 } from 'react-native';
 import { HealthContext } from '../../../logic/context/health';
 
 import Dashboard from './../Components/DashBoard/Dashboard';
 import SmartAccount from '../../../service/wallet connect/SmartAccount';
 import { ScrollView } from 'react-native';
+import { Button } from 'react-native-paper';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const CustomButton = ({ onPress, title }) => (
-  <TouchableOpacity onPress={onPress} style={styles.button}>
-    <Text style={styles.buttonText}>{title}</Text>
-  </TouchableOpacity>
-);
+// const CustomButton = ({ onPress, title }) => (
+//   <TouchableOpacity onPress={onPress} style={styles.button}>
+//     <Text style={styles.buttonText}>{title}</Text>
+//   </TouchableOpacity>
+// );
+const AuthButton = ({ label, iconSource, onPress }) => {
+  return (
+    <Button
+      labelStyle={{
+        color: "black",
+        fontSize: 16
+      }}
+      icon={({ size }) => (
+        <Image
+          source={iconSource} // Dynamic icon passed as prop
+          style={{ width: size, height: size }}
+        />
+      )}
+      mode="outlined"
+      onPress={onPress}
+      contentStyle={{
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',          // Centers content vertically
+        width: 312,
+        height: 56,
+        backgroundColor: "#FFFFFF"      // Button size
+      }}
+      style={{
+        marginBottom: 10,
+        borderRadius: 8,
+        borderColor: 'black',
+        borderWidth: 1,
+      }}
+    >
+      {label}  {/* Dynamic label passed as prop */}
+    </Button>
+  );
+};
 
 const PrimaryScreen = ({ navigation }) => {
   const { ConnectedAccountUser, key, setKey } = useContext(HealthContext);
@@ -55,18 +91,24 @@ const PrimaryScreen = ({ navigation }) => {
   
   return (
     <View style={styles.container} >
-      
+      <Image style={{marginBottom:50}}
+            source={require('../../../../assets/Logo.png')} // Replace with your Google logo image
+      />
+      <Text style={{fontSize:24,fontWeight:'bold',marginBottom:20,color:"#000000"}}>
+      Which one of these 
+are you?
+      </Text>
       <Text style={styles.AccontText}>Tap and copy your address : </Text>
       <Text selectable={true} style={styles.addressText}>
          {address} 
         
       </Text>
-      <CustomButton onPress={goToScreen1} title="Patient" />
-      <CustomButton onPress={goToScreen2} title="Doctor" />
-      <CustomButton onPress={goToScreen3} title="Pathologist" />
-      <CustomButton onPress={goToScreen4} title="Medical Research Lab" />
-      <CustomButton onPress={goToScreen5} title="Pharmacy company" />
-      <CustomButton onPress={goToScreen6} title="Admin" />
+      <AuthButton onPress={goToScreen1} label="Patient" iconSource={require('../../../../assets/mdi_patient.png')}/>
+      <AuthButton onPress={goToScreen2} label="Doctor" iconSource={require('../../../../assets/mdi_doctor.png')}/>
+      <AuthButton  onPress={goToScreen3} label="Pathologist" iconSource={require('../../../../assets/mdi_doctor.png')}/>
+      <AuthButton onPress={goToScreen4} label="Medical Research Lab" iconSource={require('../../../../assets/material-symbols_lab-panel.png')}/>
+      <AuthButton onPress={goToScreen5} label="Pharmacy company" iconSource={require('../../../../assets/mdi_doctor.png')}/>
+      <AuthButton  onPress={goToScreen6} label="Admin" iconSource={require('../../../../assets/mdi_doctor.png')}/>
      
     </View>
   );
