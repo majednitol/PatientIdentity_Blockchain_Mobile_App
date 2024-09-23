@@ -7,8 +7,8 @@ contract PatientIdentity {
     address public ownerAddress;
 
     constructor() {
-        ownerAddress = msg.sender;
-        // ownerAddress = 0x26d7d75D65c21F54ed897A800ef0D4D4767701a1;
+        // ownerAddress = msg.sender;
+        ownerAddress = 0x26d7d75D65c21F54ed897A800ef0D4D4767701a1;
     }
 
     struct commonData {
@@ -666,8 +666,8 @@ contract PatientIdentity {
             !transactions[user].executed,
             'transaction is already confirmed'
         );
-
-        if (transactions[user].confirmations == allAdmins.length()) {
+        uint256 totalAdmin = allAdmins.length();
+        if (transactions[user].confirmations == (totalAdmin - 1)) {
             address useraddress = transactions[user].to;
             if (
                 accounts[useraddress] == uint256(EntityType.MedicalResearchLab)
