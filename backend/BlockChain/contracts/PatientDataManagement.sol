@@ -102,6 +102,10 @@ contract PatientIdentity {
     }
     EnumerableSet.AddressSet pendingTx;
 
+    function getPendingUserAddess() public view returns (address[] memory) {
+        return pendingTx.values();
+    }
+
     mapping(address => Transaction) public transactions;
     struct PatientView {
         address patientAddress;
