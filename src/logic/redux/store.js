@@ -14,6 +14,7 @@ import pathologistReducer from './pathologist/pathologistSlice';
 import pathologistReducher from './pathologist/pathologistSlice1';
 import AdminReducer from './admin/AdminSlice';
 import subscriptionReducer from './subscription/subscription';
+import transactionConfirmationReducer from './transaction confirmation/transactionConfirmationSlice';
 
 export default configureStore({
   reducer: {
@@ -29,7 +30,8 @@ export default configureStore({
     connectedUser: connectedUserReducer,
     privateKey: privateKeyReducer,
     web3Auth: web3authReducer,
-    subscription: subscriptionReducer
+    subscription: subscriptionReducer,
+    transactionConfirmation:transactionConfirmationReducer
 
 
   },

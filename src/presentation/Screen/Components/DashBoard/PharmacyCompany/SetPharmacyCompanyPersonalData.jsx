@@ -1,6 +1,6 @@
 import React, {useContext, useState,useEffect, useMemo} from 'react';
-import {Text, StyleSheet, Dimensions, TouchableOpacity, Alert} from 'react-native';
-import {TextInput, ActivityIndicator} from 'react-native-paper';
+import {Text, StyleSheet, Dimensions, TouchableOpacity, Alert, View, Image} from 'react-native';
+import {TextInput, ActivityIndicator, IconButton} from 'react-native-paper';
 
 import {ScrollView} from 'react-native-gesture-handler';
 import { HealthContext } from '../../../../../logic/context/health';
@@ -111,10 +111,26 @@ const SetPharmacyCompanyPersonalData = () => {
   };
 
   return (
-    <ScrollView >
-      {/* Your custom patient input form */}
-      <ScrollView View style={{marginHorizontal: 16}}>
+    <ScrollView  style={{paddingHorizontal: 15, marginHorizontal: 16, backgroundColor:"#F6F6F6"}}>
+    <View style={{
+      flexDirection: 'row',         // Aligns buttons in a row
+  justifyContent: 'space-between',     // Centers buttons horizontally
+  alignItems: 'center',         // Centers buttons vertically
+        marginTop: 30,
+  marginBottom:10
+      }}>
+        <IconButton
+      icon="arrow-left"
+      size={28} iconColor='black'
+          onPress={() => {
+        navigation.goBack();
+      }}
+      style={{}}
+    />
 
+    <Image source={require('../../.././../../../assets/sub.png')} style={styles.logo} width={0} height={0}/>
+    </View>
+    <Text style={{fontSize:24,fontWeight:"bold", color:"#000039", marginBottom:20}}>Create Your Account</Text>
 
         <TextInput
           style={{marginVertical: 10}}
@@ -162,7 +178,7 @@ const SetPharmacyCompanyPersonalData = () => {
             <ActivityIndicator color="white" style={{ position: 'relative', top: height*(-0.077) }} />
           ) : null} */}
       </ScrollView>
-    </ScrollView>
+
   );
 };
 
@@ -171,12 +187,13 @@ export default SetPharmacyCompanyPersonalData;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'rgb(108, 99, 255)',
+    backgroundColor: '#8D68F6',
     height: height * 0.05, // 20% of window height
     width: width * 0.8, // 80% of window width
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: width * (0.05),
+    marginLeft: width * (0.025),
+
       borderRadius: 10,
       marginVertical: 30,
    

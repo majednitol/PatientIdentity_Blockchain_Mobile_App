@@ -88,7 +88,7 @@ const HealthProvider = ({ children }) => {
   const [isUserCardShowTo, setIsUserCardShowTo] = useState(false)
   const [isUserCardShowFrom, setIsUserCardShowFrom] = useState(false)
   const [web3Auth, setWeb3Auth] = useState('')
-  
+  const [revokeLoader, setRevokeLoader] = useState(false)
   const chains =
 {
     chainId: 97,
@@ -628,9 +628,10 @@ const HealthProvider = ({ children }) => {
 
   const revokeAccess = async (index, smartAccount) => {
     try {
-      setDeleteloader(true)
+      setRevokeLoader(true)
       const contract = await Contract.fetchContract()
       const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
+      console.log("index",index)
       const tx = await contract.populateTransaction.revokeAccessData(index)
       const tx1 = {
         to: contractAddress,
@@ -641,7 +642,7 @@ const HealthProvider = ({ children }) => {
       });
       console.log('userOpResponse', userOpResponse)
       Alert.alert("Successfully Revoked Access")
-      setDeleteloader(true)
+      setRevokeLoader(false)
 
   
       forceUpdate()
@@ -926,7 +927,7 @@ const HealthProvider = ({ children }) => {
         PatientToPharmacySharedData,
         getPatientAllPrescription, privateKey, setPrivateKey, isContractLoading, setIsContractLoading, isLoading, address, connectedAccountBalance, ispatientLoading, getPatientForDoctor, getPathologistForDoctor, scanAddress, setScanAddress, isShareLoading, screen, setScreen, deletePrescription, deleteloader, revokeAccess, timeStamp, getCurrentNotificationCreationTime, reducerValue, forceUpdate, accountCreationLoader, setAccountCreationLoader,
         btnclick, emailAddress, setEmailAddress, contract, imagesUrl, setImagesUrl, pathologistDoctorList, doctorPathoList, getPathologistDataFromDoctor, getDoctorDataFromPathologist, doctorReportFromPatho, prescriptionFromDoctor, getDoctorAllOtherData, getPatientDataFromDoctor, doctorAnotherData, isDbVisiable, setIsDbVisiable, anotherUser, setAnotherUser, isUserCardShowTo, setIsUserCardShowTo, isUserCardShowFrom, setIsUserCardShowFrom, getAllusersData, allUserTypeAddress, setAllUserTypeAddress, searchUser, searchedUsers, setSearchUsers, sharedAllUsersAddress, getsharedAllUsersAddress, personalDoctor, getPersonalDoctor, patientToParmacyCompany, patientToMedicalRLab, getPatientToMedRcLab, getPatientToPharmacy, connectedAccount, smartAccountAddress, setSmartAccountAddress, setSmartAccount, smartAccount,setConnectedAccountUser,login,isLoggedIn,web3Auth, setWeb3Auth,downloadProgress, setDownloadProgress,userAddress,setUserAddress,
-
+        revokeLoader, setRevokeLoader
       }}>
       {children}
     </HealthContext.Provider>

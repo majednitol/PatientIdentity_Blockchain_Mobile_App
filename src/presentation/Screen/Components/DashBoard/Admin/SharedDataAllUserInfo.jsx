@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
+import { View, StyleSheet, RefreshControl, Dimensions, TouchableOpacity } from 'react-native';
 import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminData, getsharedAllUsersAddress } from '../../../../../logic/redux/admin/AdminSlice';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
 import { ethers } from 'ethers';
-
+const { width, height } = Dimensions.get('window');
 const SharedDataAllUserInfo = () => {
     const theme = useTheme();
     const { isLoading, reducerValue, sharedAllUsersAddress } = useContext(HealthContext);
@@ -17,6 +17,7 @@ const SharedDataAllUserInfo = () => {
     const [SharedDataAllUserAddress, setSharedDataAllUserAddress] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
     const dispatch = useDispatch();
+    const [isDataLoaded, setIsDataLoaded] = useState(false);
     const fetchData = async () => {
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         console.log('saAddress7777', saAddress);
@@ -25,22 +26,24 @@ const SharedDataAllUserInfo = () => {
     const onRefresh = () => {
         setRefreshing(true);
         fetchData();
+        setIsDataLoaded(false);
 
 
         setRefreshing(false);
     };
     useEffect(() => {
-        fetchData();
+        fetchData()
         
     }, [dispatch])
     useEffect(() => {
-        if (!isLoading && Array.isArray(sharedAllUsers?.data)) {
+        if (!sharedAllUsers.loading && Array.isArray(sharedAllUsers?.data)) {
             const alluserAddress = sharedAllUsers.data;
             setSharedDataAllUserAddress(alluserAddress || []);
+            setIsDataLoaded(true);
 
 
         }
-    }, [sharedAllUsers?.data, isLoading]);
+    }, [sharedAllUsers?.data, sharedAllUsers.loading]);
 console.log('SharedDataAllUserAddress',sharedAllUsers.data)
     return (
         <View style={styles.container}>
@@ -48,23 +51,23 @@ console.log('SharedDataAllUserAddress',sharedAllUsers.data)
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                 <Animated.View entering={FadeInDown.springify()} exiting={FadeInUp.springify()}>
-                    {isLoading ? (
+                    {sharedAllUsers.loading ? (
                         <View style={styles.loadingContainer}>
                             <ActivityIndicator size={40} animating={true} color={theme.colors.primary} />
                         </View>
                     ) : (
                         <>
-                            {SharedDataAllUserAddress.length > 0 ? (
-                                SharedDataAllUserAddress.slice().reverse().map((userAddress, index) => (
-                                    <AllUserCard key={index} userAddress={userAddress} index={index} data={SharedDataAllUserAddress} />
-                                ))
-                            ) : (
+                            {isDataLoaded && SharedDataAllUserAddress.length === 0 ? (
                                 <Card style={{ marginTop: 20 }}>
                                     <Card.Content>
                                         <Text style={styles.title}>You did't share your prescription anyone yet</Text>
                                     </Card.Content>
                                 </Card>
-                            )}
+                            ) :(
+                                SharedDataAllUserAddress.slice().reverse().map((userAddress, index) => (
+                                    <AllUserCard key={index} userAddress={userAddress} index={index} data={SharedDataAllUserAddress} />
+                                ))
+                            ) }
                         </>
                     )}
                 </Animated.View>
@@ -74,7 +77,7 @@ console.log('SharedDataAllUserAddress',sharedAllUsers.data)
 };
 
 const AllUserCard = ({ userAddress }) => {
-    const { isLoading, getAlluserData, revokeAccess } = useContext(HealthContext);
+    const { isLoading, getAlluserData, revokeAccess,revokeLoader } = useContext(HealthContext);
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
@@ -102,9 +105,10 @@ const AllUserCard = ({ userAddress }) => {
                         <CustomText label="UserId " value={String(userData[2])} />
                         <CustomText label="User Name" value={ethers.utils.parseBytes32String(userData[3])} />
                         <CustomText label="Email Address" value={ethers.utils.parseBytes32String(userData.emailAddress)} />
-                        <Button onPress={() => { revokeAccess(userData.userAddress) }} mode='contained' style={styles.button} >
-                            Revoke Access
-                        </Button>
+         
+                        <TouchableOpacity onPress={() => { revokeAccess(userData.userAddress) }} style={styles.button}>
+                      <Text style={{ color: 'white', fontWeight: 'bold' }}>Revoke Access</Text>
+                </TouchableOpacity>
                     </>
                 ) : (
                     <ActivityIndicator />
@@ -140,6 +144,16 @@ const styles = StyleSheet.create({
     card: {
         marginBottom: 10,
         elevation: 20,
+    },
+    button: {
+        backgroundColor: 'red',
+        height: height * 0.05,
+        width: width * 0.8,
+        justifyContent: 'center',
+        alignItems: 'center',
+
+        borderRadius: 10,
+   
     },
     title: {
         fontSize: 15,

@@ -61,6 +61,7 @@ import { fetchAdminData } from '../../../../logic/redux/admin/AdminSlice';
 import SharedDataAllDoctorsInfo from './Patient/SharedDataAllDoctorInfo';
 import PatientAllPrescription from './PharmacyCompany/PatientAllPrescription';
 import PatientAllprescription from './MedicalResearchLab/PatientAllprescription';
+import GiveConfirmationTx from './Admin/GiveConfirmationTx';
 
 
 
@@ -80,7 +81,7 @@ export default function Dashboard() {
   } = useContext(HealthContext);
   console.log("patientData88", patientData)
   const scheme = useColorScheme();
-  StatusBar.setBackgroundColor('rgb(108, 99, 255)');
+  StatusBar.setBackgroundColor('#8D68F6');
 
   const MyTheme = {
     dark: false,
@@ -101,7 +102,7 @@ export default function Dashboard() {
       text: '#111',
 
       backgroundColor: '#rgb(228, 226, 255)',
-      headerbackgroundColor: 'rgb(108, 99, 255)',
+      headerbackgroundColor: '#8D68F6',
       headerTintColor: '#fff',
       iconcolor: '#808080',
     },
@@ -296,8 +297,8 @@ export default function Dashboard() {
         },
         headerStyle: {
           backgroundColor: scheme === 'light'
-            ? 'rgb(108, 99, 255)'
-            : 'rgb(108, 99, 255)',
+            ? '#8D68F6'
+            : '#8D68F6',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -526,6 +527,23 @@ export default function Dashboard() {
               ),
             }}
             component={SharedDataAllUserInfo}
+          />
+                   <Drawer.Screen
+            name="Give Confirmation"
+            options={{
+              drawerLabel: 'Give Confirmation ',
+              title: 'Give Confirmation ',
+              drawerIcon: () => (
+                <Icon
+                  source="account-group"
+                  color={scheme === 'light'
+                    ? MyTheme.lightColors.text
+                    : MyTheme.darkcolors.text}
+                  size={20}
+                />
+              ),
+            }}
+            component={GiveConfirmationTx}
           />
           <Drawer.Screen
             name="Prescription"

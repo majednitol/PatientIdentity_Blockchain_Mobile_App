@@ -123,26 +123,25 @@ const SetPatientPersonalDetails = () => {
 
   return (
     
-      <ScrollView  style={{ marginHorizontal: 16, backgroundColor:"#F6F6F6"}}>
-      <View style={{
-        flexDirection: 'row',         // Aligns buttons in a row
-    justifyContent: 'space-between',     // Centers buttons horizontally
-    alignItems: 'center',         // Centers buttons vertically
-          marginTop: 30,
-    marginBottom:10
-        }}>
-          <IconButton
-        icon="arrow-left"
-        size={28} iconColor='black'
-            onPress={() => {
-          navigation.goBack();
-        }}
-        style={{}}
-      />
+    <ScrollView  style={{paddingHorizontal: 15, marginHorizontal: 16, backgroundColor:"#F6F6F6"}}>
+    <View style={{
+      flexDirection: 'row',         // Aligns buttons in a row
+  justifyContent: 'space-between',     // Centers buttons horizontally
+  alignItems: 'center',         // Centers buttons vertically
+        marginTop: 30,
+  marginBottom:10
+      }}>
+        <IconButton
+      icon="arrow-left"
+      size={28} iconColor='black'
+          onPress={() => {
+        navigation.goBack();
+      }}
+      style={{}}
+    />
 
-      <Image source={require('../../.././../../../assets/sub.png')} style={styles.logo} width={0} height={0}/>
-      </View>
-      
+    <Image source={require('../../.././../../../assets/sub.png')} style={styles.logo} width={0} height={0}/>
+    </View>
 
       <Text style={{fontSize:24,fontWeight:"bold", color:"#000039", marginBottom:20}}>Create Your Account</Text>
         <TextInput
@@ -219,7 +218,8 @@ const styles = StyleSheet.create({
     width: width * 0.8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: width * (0.05),
+    marginLeft: width * (0.025),
+
     borderRadius: 10,
     marginVertical: 30,
   },

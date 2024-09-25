@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { fetchAdminData } from '../../../../../logic/redux/admin/AdminSlice';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { ScrollView } from 'react-native';
 import { RefreshControl } from 'react-native';
-import { ActivityIndicator, Card, useTheme } from 'react-native-paper';
+import { ActivityIndicator,Text, Card, useTheme } from 'react-native-paper';
 import { ethers } from 'ethers';
 const PersonalInfo = () => {
   const theme = useTheme();

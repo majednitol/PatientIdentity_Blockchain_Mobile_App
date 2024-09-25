@@ -72,7 +72,7 @@ contract PatientIdentity {
     uint256 public transactionCount;
     EnumerableSet.AddressSet private allAdmins;
     uint256 public numberOfConfirmations;
-    mapping(address => bool) public isConfirmed;
+    mapping(address => mapping(address => bool)) public isConfirmed;
     modifier onlyAdmin() {
         require(admin[msg.sender].isAdded, 'You must be an admin');
         _;
@@ -100,10 +100,10 @@ contract PatientIdentity {
         bool executed;
         uint256 confirmations;
     }
-    EnumerableSet.AddressSet pendingTx;
+    mapping(address => EnumerableSet.AddressSet) pendingTx;
 
     function getPendingUserAddess() public view returns (address[] memory) {
-        return pendingTx.values();
+        return pendingTx[ownerAddress].values();
     }
 
     mapping(address => Transaction) public transactions;
@@ -660,8 +660,11 @@ contract PatientIdentity {
             isAddressInAllAdmins(msg.sender),
             'Address is not in allAdmins'
         );
-        require(!isConfirmed[msg.sender], 'Address is already confirmed');
-        require(pendingTx.contains(user), 'This user not have any transaction');
+        require(!isConfirmed[msg.sender][user], 'Address is already confirmed');
+        require(
+            pendingTx[ownerAddress].contains(user),
+            'This user not have any transaction'
+        );
         require(
             !transactions[user].executed,
             'transaction is already confirmed'
@@ -676,24 +679,25 @@ contract PatientIdentity {
                     msg.sender
                 );
                 sd.sharedAllUsersAddress.add(useraddress);
-                isConfirmed[msg.sender] = true;
+
                 transactions[useraddress].executed = true;
-                pendingTx.remove(useraddress);
-                isConfirmed[msg.sender] = false;
+                pendingTx[ownerAddress].remove(useraddress);
+                isConfirmed[msg.sender][user] = false;
             } else if (
                 accounts[useraddress] == uint256(EntityType.PharmacyCompany)
             ) {
                 pharmacyCompanies[useraddress].adminToPharmacy.add(msg.sender);
                 sd.sharedAllUsersAddress.add(useraddress);
-                isConfirmed[msg.sender] = true;
+
                 transactions[useraddress].executed = true;
-                pendingTx.remove(useraddress);
-                isConfirmed[msg.sender] = false;
+                pendingTx[ownerAddress].remove(useraddress);
+                isConfirmed[msg.sender][user] = false;
             } else {
                 revert('only transaction execute for pharma and medi');
             }
         } else {
             transactions[user].confirmations++;
+            isConfirmed[msg.sender][user] = true;
         }
     }
 
@@ -878,7 +882,7 @@ contract PatientIdentity {
             );
 
             require(
-                !pendingTx.contains(useraddress),
+                !pendingTx[ownerAddress].contains(useraddress),
                 'transacaction already submitted'
             );
 
@@ -906,7 +910,8 @@ contract PatientIdentity {
                         executed: false,
                         confirmations: 0
                     });
-                    pendingTx.add(useraddress);
+
+                    pendingTx[ownerAddress].add(useraddress);
                     // medicalResearchLabs[useraddress].adminToMedRcLab.add(msg.sender);
                     // sd.sharedAllUsersAddress.add(useraddress);
                 }
@@ -932,7 +937,7 @@ contract PatientIdentity {
                         executed: false,
                         confirmations: 0
                     });
-                    pendingTx.add(useraddress);
+                    pendingTx[ownerAddress].add(useraddress);
                     // pharmacyCompanies[useraddress].adminToPharmacy.add(msg.sender);
                     // sd.sharedAllUsersAddress.add(useraddress);
                 }
@@ -1183,6 +1188,7 @@ contract PatientIdentity {
                 doctors[userAddress].PatientToDoctor.remove(msg.sender);
             }
         } else if (accounts[msg.sender] == uint256(EntityType.Admin)) {
+            sd.sharedAllUsersAddress.remove(userAddress);
             if (
                 accounts[userAddress] == uint256(EntityType.MedicalResearchLab)
             ) {

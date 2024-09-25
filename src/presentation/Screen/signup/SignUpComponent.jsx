@@ -54,22 +54,27 @@ const SignUpComponent = () => {
       />
       <Stack.Screen
         name="Doctor SignUp Screen"
+        options={{ headerShown: false }}
         component={SetDoctorPersonalData}
       />
       <Stack.Screen
         name="Pathologist SignUp Screen"
+        options={{ headerShown: false }}
         component={SetPathologistPersonalData}
       />
       <Stack.Screen
         name="Medical Research Lab SignUp Screen"
+        options={{ headerShown: false }}
         component={SetMediResearchLabPersonalData}
       />
       <Stack.Screen
         name="Pharmacy company SignUp Screen"
+        options={{ headerShown: false }}
         component={SetPharmacyCompanyPersonalData}
       />
       <Stack.Screen
         name="Admin SignUp Screen"
+        options={{ headerShown: false }}
         component={SetAdmin}
       />
     </Stack.Navigator>

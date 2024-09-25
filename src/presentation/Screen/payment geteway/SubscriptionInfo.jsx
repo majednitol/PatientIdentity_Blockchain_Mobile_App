@@ -46,7 +46,7 @@ function SubscriptionInfo() {
                     <Card.Content>
                         <Text style={styles.label}>Subscription Total Days:</Text>
                         <Text style={styles.value}>
-                            {subscriptionStatus?.data?.[1] ? convertTimestampToDays(subscriptionStatus.data[1]) + ' days' : 'N/A'}
+                            {subscriptionStatus?.data?.[1] ? subscriptionStatus.data[1] + ' Years' : 'N/A'}
                         </Text>
                     </Card.Content>
                 </Card>

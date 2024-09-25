@@ -39,7 +39,7 @@ const SplashScreen = ({navigation}) => {
       <ActivityIndicator
         size={40}
         animating={true}
-        color="rgb(108, 99, 255)"
+        color="#8D68F6"
         style={{
           position: 'absolute',
           bottom: 100,

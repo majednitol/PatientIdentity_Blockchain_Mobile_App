@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert } from 'react-native';
-import { TextInput, Button, ActivityIndicator } from 'react-native-paper';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Alert, Image } from 'react-native';
+import { TextInput, Button, ActivityIndicator, IconButton } from 'react-native-paper';
 // import {useContract, useContractWrite} from '@thirdweb-dev/react-native';
 // import {contractAddress} from '../../../../constant';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -126,9 +126,27 @@ const SetDoctorPersonalData = () => {
   };
 
   return (
-    <ScrollView>
-      <ScrollView View style={{ marginHorizontal: 16 }}>
+    
+    <ScrollView  style={{paddingHorizontal: 15, marginHorizontal: 16, backgroundColor:"#F6F6F6"}}>
+    <View style={{
+      flexDirection: 'row',         // Aligns buttons in a row
+  justifyContent: 'space-between',     // Centers buttons horizontally
+  alignItems: 'center',         // Centers buttons vertically
+        marginTop: 30,
+  marginBottom:10
+      }}>
+        <IconButton
+      icon="arrow-left"
+      size={28} iconColor='black'
+          onPress={() => {
+        navigation.goBack();
+      }}
+      style={{}}
+    />
 
+    <Image source={require('../../.././../../../assets/sub.png')} style={styles.logo} width={0} height={0}/>
+    </View>
+    <Text style={{fontSize:24,fontWeight:"bold", color:"#000039", marginBottom:20}}>Create Your Account</Text>
 
         <TextInput
           style={{ marginVertical: 10 }}
@@ -196,7 +214,7 @@ const SetDoctorPersonalData = () => {
           <ActivityIndicator color="white" style={{ position: 'relative', top: height * (-0.077) }} />
         ) : null} */}
       </ScrollView>
-    </ScrollView>
+  
   );
 };
 
@@ -204,12 +222,13 @@ export default SetDoctorPersonalData;
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'rgb(108, 99, 255)',
+    backgroundColor: '#8D68F6',
     height: height * 0.05, // 20% of window height
     width: width * 0.8, // 80% of window width
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: width * (0.05),
+    marginLeft: width * (0.025),
+
     borderRadius: 10,
     marginVertical: 30,
 

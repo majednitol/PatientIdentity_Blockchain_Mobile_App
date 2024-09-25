@@ -16,7 +16,7 @@ import { Alert } from 'react-native';
 import SmartAccount from '../../../../service/wallet connect/SmartAccount';
 // import { deletePrescription } from '../../../../logic/redux/doctor/DoctorSlice';
 const { width, height } = Dimensions.get('window');
-const [isDataLoaded, setIsDataLoaded] = useState(false);
+
 const QRCodeGenerator = ({ url, onClose }) => {
     return (
         <Modal visible={true} transparent={true} >
@@ -41,7 +41,7 @@ const QRCodeGenerator = ({ url, onClose }) => {
 const DisplayFile = ({ userData, route }) => {
     const { ConnectedAccountUser, reducerValue, anotherUser, isDbVisiable, setIsDbVisiable, downloadProgress, setDownloadProgress, userAddress, setUserAddress } = useContext(HealthContext);
     const dispatch = useDispatch();
-    const [isDataLoaded, setIsDataLoaded] = useState(false);
+ 
     const { connectedUserType } = useSelector((state) => state.connectedUser);
 
     const { success, deleteLoader, error } = useSelector((state) => state.patient);
@@ -88,7 +88,7 @@ const DisplayFile = ({ userData, route }) => {
                     <TouchableOpacity onPress={() => openFullscreen(item)}>
                         <IconButton
                             icon="dots-vertical"
-                            iconColor='rgb(108, 99, 255)'
+                            iconColor='#8D68F6'
                             size={20}
                             style={[styles.iconButton, { backgroundColor: 'rgb(228, 226, 255)' }]}
                             onPress={() => {
@@ -108,7 +108,7 @@ const DisplayFile = ({ userData, route }) => {
                 </View>
             ));
             setImages(imageComponents);
-            setIsDataLoaded(true);
+          
         } catch (error) {
             console.log(error);
         }
@@ -168,13 +168,13 @@ const DisplayFile = ({ userData, route }) => {
                             <Button mode="text" style={{ paddingLeft: 5 }} disabled={curPage === Math.ceil(images.length / 9) - 1} onPress={goToNextPage}>Next</Button>
                         </View>
                     </>
-                ) : isDataLoaded && images.length === 0 ? (
+                ) :  images.length === 0 ? (
                     <Text>No Prescription to display</Text>
                 ) : (
                     <ActivityIndicator
                         size={45}
                         animating={true}
-                        color="rgb(108, 99, 255)"
+                        color="#8D68F6"
                         style={styles.loadingIndicator}
                     />
                 )}
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
     },
 
     button: {
-        backgroundColor: 'rgb(108, 99, 255)',
+        backgroundColor: '#8D68F6',
         height: height * 0.05, // 20% of window height
         width: width * 0.8, // 80% of window width
         justifyContent: 'center',
