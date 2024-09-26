@@ -205,7 +205,7 @@ export default function Dashboard() {
                 ) : String(connectedUserType) === '1' ? (
                   <ProfilePicture userData={doctorData?.[8]} />
                 ) : String(connectedUserType) === '2' ? (
-                  <ProfilePicture userData={pathologistData?.[11]} />
+                  <ProfilePicture userData={pathologistData?.[9]} />
                 ) : String(connectedUserType) === '4' ? (
                   <ProfilePicture userData={pharmacyCompanyData?.[9]} />
                 ) : String(connectedUserType) === '3' ? (

@@ -41,8 +41,9 @@ const DoctorPersonalPatientList = () => {
 
           setPatientDataArray(patientDataArray.map(data => data.payload));
         }
-        setIsDataLoaded(true);
+        
       }
+      setIsDataLoaded(true);
 
     };
     fetchData();
@@ -134,7 +135,7 @@ const PatientCard = ({ patientData }) => {
                 alignItems: 'center',         // Centers buttons vertically
 
               }}>
-                <ProfilePicture userData={patientData?.[10]} height={150} width={119} borderRadius={20} />
+                <ProfilePicture userData={patientData?.[10]} height={130} width={100} borderRadius={20} />
                 <View style={{ width: 171, height: 124, marginBottom: 20 }}>
                   <CustomText label="Account" value={patientData[0]} />
                   <CustomText label="PatientId" value={String(patientData[1])} />

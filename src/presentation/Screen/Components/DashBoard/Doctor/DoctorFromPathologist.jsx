@@ -42,9 +42,9 @@ const DoctorFromPathologist = () => {
           // dispatch(fetchPatientDataFromDoctor(doctor));
           setPathologistDataArray(pathologistDataArray.map(data => data.payload));
         }
-        setIsDataLoaded(true);
+        
       }
-
+      setIsDataLoaded(true);
     };
     fetchData();
   }, [loading, doctorAnotherData]);
@@ -135,8 +135,8 @@ const PathoLogistCard = ({ pathologistData }) => {
                 alignItems: 'center',         // Centers buttons vertically
 
               }}>
-                <ProfilePicture userData={pathologistData?.[11]} height={150} width={119} borderRadius={20} />
-                <View>
+                <ProfilePicture userData={pathologistData?.[9]} height={130} width={100} borderRadius={20} />
+                <View style={{marginLeft: 20}}>
                   <CustomText label="Account " value={pathologistData?.[0]} />
                   <CustomText label="EmailAddress" value={''} />
                   <CustomText label="PathologistID" value={String(pathologistData?.[1])} />

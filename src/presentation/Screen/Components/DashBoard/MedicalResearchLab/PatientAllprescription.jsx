@@ -358,7 +358,7 @@ const PatientAllprescription = () => {
     dispatch(getadminToMedRcLabData())
 
 
-  }, [dispatch,adminToMedRcLab.loading])
+  }, [dispatch])
   useEffect(() => {
     if (!adminToMedRcLab.loading && Array.isArray(adminToMedRcLab.data)) {
 
@@ -379,7 +379,7 @@ const PatientAllprescription = () => {
             </View>
           ) : (
             <>
-              {isDataLoaded && prescriptionSenderAdmin.length === 0 ? (
+              { isDataLoaded && prescriptionSenderAdmin.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>Admin didnot send any prescription yet.</Text>
@@ -429,8 +429,8 @@ const AdminCard = ({ admin }) => {
               alignItems: 'center',         // Centers buttons vertically
 
             }}>
-              <ProfilePicture userData={adminData.data?.[4]} height={150} width={119} borderRadius={20} />
-              <View>
+              <ProfilePicture userData={adminData.data?.[4]} height={130} width={100} borderRadius={20} />
+              <View style={{marginLeft: 20}}>
                 <CustomText label="Account" value={adminData?.data?.[0]} />
                 <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
                 <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(adminData?.data?.[2])} />

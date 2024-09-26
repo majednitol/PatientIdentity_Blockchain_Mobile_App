@@ -79,7 +79,7 @@ const ProfilePicture = ({ userData, height, width, borderRadius }) => {
         });
         console.log('userOpResponse', userOpResponse)
 
-        // addProfilePic(imgHash, smartAccount);
+       // addProfilePic(imgHash, smartAccount);
 
 
         setPploader(false);
@@ -95,7 +95,8 @@ const ProfilePicture = ({ userData, height, width, borderRadius }) => {
   };
 
   return (
-    <View>
+    <View style={{marginBottom:10}}>
+    <View >
       {(height && width && borderRadius) ? <View>
         {file ? (
           <FastImage
@@ -105,7 +106,7 @@ const ProfilePicture = ({ userData, height, width, borderRadius }) => {
         ) : profilePic === '' || profilePic === undefined || profilePic === null ? (
           <FastImage
             source={require('../../../../../assets/icon.png')}
-            style={{ height: height, width: 130, borderRadius: 65 }}
+            style={{ height: height, width: width, borderRadius: borderRadius }}
           />
         ) : ipfsFile === null ? setPploader(true) : (
           <FastImage
@@ -121,7 +122,7 @@ const ProfilePicture = ({ userData, height, width, borderRadius }) => {
           {file ? (
             <FastImage
               source={{ uri: file.uri }}
-              style={{ height: height, width: width, borderRadius: borderRadius }}
+              style={{ height: 130, width: 130, borderRadius: 65 }}
             />
           ) : profilePic === '' || profilePic === undefined || profilePic === null ? (
             <FastImage
@@ -143,7 +144,7 @@ const ProfilePicture = ({ userData, height, width, borderRadius }) => {
       </View>}
 
 
-    </View>
+    </View></View>
   );
 };
 

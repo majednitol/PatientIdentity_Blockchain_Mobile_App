@@ -25,7 +25,7 @@ const PatientAllPrescription = () => {
     setRefreshing(true);
 
     dispatch(getAdminToPharmacyData())
-    isDataLoaded(false)
+    setIsDataLoaded(false)
     setRefreshing(false);
   };
   useEffect(() => {
@@ -104,8 +104,8 @@ const AdminCard = ({ admin }) => {
                 alignItems: 'center',         // Centers buttons vertically
 
               }}>
-                <ProfilePicture userData={adminData.data?.[4]} height={150} width={119} borderRadius={20} />
-                <View>
+                <ProfilePicture userData={adminData.data?.[4]} height={130} width={100} borderRadius={20} />
+                <View style={{marginLeft:20}}>
                   <CustomText label="Account" value={adminData?.data?.[0]} />
                   <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
                   <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(adminData?.data?.[2])} />

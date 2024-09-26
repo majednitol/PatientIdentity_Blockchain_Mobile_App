@@ -30,7 +30,7 @@ const GetPathologistPersonalData = () => {
           <Card.Content>
             <Text style={styles.title}>Pathologist Personal Information</Text>
             <CustomText label="Account " value={pathologistData?.[0]} />
-            <CustomText label="EmailAddress" value={pathologistData?.[12] ? ethers.utils.parseBytes32String(pathologistData?.[12]) : null} />
+            {/* <CustomText label="EmailAddress" value={pathologistData?.[12] ? ethers.utils.parseBytes32String(pathologistData?.[12]) : null} /> */}
             <CustomText label="PathologistID" value={String(pathologistData?.[1])} />
             <CustomText label="Pathologist Name" value={pathologistData? ethers.utils.parseBytes32String(pathologistData?.[2]) : null} />
             <CustomText label="Pathologist BirthDay" value={pathologistData ? ethers.utils.parseBytes32String(pathologistData?.[10]) : null} />

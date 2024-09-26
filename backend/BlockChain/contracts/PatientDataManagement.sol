@@ -8,7 +8,7 @@ contract PatientIdentity {
 
     constructor() {
         // ownerAddress = msg.sender;
-        ownerAddress = 0x26d7d75D65c21F54ed897A800ef0D4D4767701a1;
+        ownerAddress = 0x4B189DBB3a45663F1c218B2E271cE8b174E11137;
     }
 
     struct commonData {
@@ -346,7 +346,7 @@ contract PatientIdentity {
         if (subscriptionExpiration[subscriber] > block.timestamp) {
             uint256 expiration = subscriptionExpiration[subscriber];
             daysLeft = (expiration - block.timestamp) / 86400;
-            total = totalSubscription[msg.sender] / 31536000;
+            total = totalSubscription[subscriber] / 31536000;
             return (true, total, daysLeft);
         } else {
             return (false, 0, 0);
@@ -676,7 +676,7 @@ contract PatientIdentity {
                 accounts[useraddress] == uint256(EntityType.MedicalResearchLab)
             ) {
                 medicalResearchLabs[useraddress].adminToMedRcLab.add(
-                    msg.sender
+                    ownerAddress
                 );
                 sd.sharedAllUsersAddress.add(useraddress);
 
@@ -686,7 +686,9 @@ contract PatientIdentity {
             } else if (
                 accounts[useraddress] == uint256(EntityType.PharmacyCompany)
             ) {
-                pharmacyCompanies[useraddress].adminToPharmacy.add(msg.sender);
+                pharmacyCompanies[useraddress].adminToPharmacy.add(
+                    ownerAddress
+                );
                 sd.sharedAllUsersAddress.add(useraddress);
 
                 transactions[useraddress].executed = true;

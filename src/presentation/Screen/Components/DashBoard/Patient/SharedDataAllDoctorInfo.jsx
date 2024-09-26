@@ -10,6 +10,7 @@ import { fetchPatientData, getsharedAllDoctorAddress } from '../../../../../logi
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
 import ProfilePicture from '../../File/ProfilePicture';
 import { ethers } from 'ethers';
+import { fetchDoctorData } from '../../../../../logic/redux/doctor/DoctorSlice';
 
 const SharedDataAllDoctorsInfo = () => {
     const theme = useTheme();
@@ -41,7 +42,7 @@ const SharedDataAllDoctorsInfo = () => {
         if (!isLoading && Array.isArray(patientData)) {
             const allDoctorsAddress = sharedAllDoctorAddress.data;
             setSharedDataAllDoctorAddress(allDoctorsAddress || []);
-            isDataLoaded(true)
+            setIsDataLoaded(true)
 
 
         }
@@ -81,6 +82,19 @@ const SharedDataAllDoctorsInfo = () => {
 const AllUserCard = ({ userAddress }) => {
     const { isLoading, getAlluserData, revokeAccess } = useContext(HealthContext);
     const [userData, setUserData] = useState(null);
+    const dispatch = useDispatch();
+    const { doctorData, loading, error } = useSelector((state) => state.doctor);
+    const fetchData = async () => {
+
+
+        dispatch(fetchDoctorData(userAddress));
+
+    }
+
+    useEffect(() => {
+        fetchData()
+    }, [userAddress])
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -107,17 +121,18 @@ const AllUserCard = ({ userAddress }) => {
                             alignItems: 'center',         // Centers buttons vertically
 
                         }}>
-                            <ProfilePicture userData={doctorData?.[8]} height={150} width={119} borderRadius={20} />
-                            <View>
+                            <ProfilePicture userData={doctorData?.[8]} height={130} width={100} borderRadius={20} />
+                            <View style={{marginLeft: 10}}>
                                 <CustomText label="Account " value={userData.userAddress} />
                                 <CustomText label="DoctorId " value={String(userData[2])} />
                                 <CustomText label="Doctor Name" value={ethers.utils.parseBytes32String(userData[3])} />
                                 <CustomText label=" Doctor Email Address" value={ethers.utils.parseBytes32String(userData.emailAddress)} />
-                                <Button onPress={() => { revokeAccess(userData.userAddress) }} mode='contained' style={styles.button} >
-                                    Revoke Access
-                                </Button>
+
                             </View>
                         </View>
+                        <Button onPress={() => { revokeAccess(userData.userAddress) }} mode='contained' style={styles.button} >
+                            Revoke Access
+                        </Button>
                     </>
                 ) : (
                     <ActivityIndicator />

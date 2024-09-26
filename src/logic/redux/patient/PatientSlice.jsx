@@ -125,19 +125,26 @@ export const updatePatientHealthData = createAsyncThunk('updatePatientHealthData
     birthDefects }) => {
 
     try {
-
+        const bloodGroupPadded = ethers.utils.formatBytes32String(bloodGroup);
+        const heighPadded = ethers.utils.formatBytes32String(heigh);
+        const previousDiseasesPadded = ethers.utils.formatBytes32String(previousDiseases);
+        const medicineDrugsPadded = ethers.utils.formatBytes32String(medicineDrugs);
+        const badHabitsPadded = ethers.utils.formatBytes32String(badHabits);
+        const chronicDiseasesPadded = ethers.utils.formatBytes32String(chronicDiseases);
+        const healthAllergiesPadded = ethers.utils.formatBytes32String(healthAllergies);
+        const birthDefectsPadded = ethers.utils.formatBytes32String(birthDefects);
         const [smartWallet, saAddress] = await SmartAccount.connectedSmartAccount();
         console.log('098876543234567', saAddress)
         const contract = await Contract.fetchContract()
         const tx = await contract?.populateTransaction.setPatientPersonalData(
-            heigh,
-            bloodGroup,
-            previousDiseases,
-            medicineDrugs,
-            badHabits,
-            chronicDiseases,
-            healthAllergies,
-            birthDefects,
+            heighPadded,
+            bloodGroupPadded,
+            previousDiseasesPadded,
+            medicineDrugsPadded,
+            badHabitsPadded,
+            chronicDiseasesPadded,
+            healthAllergiesPadded,
+            birthDefectsPadded,
         );
 
         const tx1 = {

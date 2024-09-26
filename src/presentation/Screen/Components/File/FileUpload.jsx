@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
 
   },
   button: {
-    backgroundColor: 'rgb(108, 99, 255)',
+    backgroundColor: '#8D68F6',
     height: height * 0.05, 
     width: width * 0.8, 
     justifyContent: 'center',
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 100, marginTop: 90, marginBottom: 100
   },
   button2: {
-    backgroundColor: 'rgb(108, 99, 255)',
+    backgroundColor: '#8D68F6',
     height: height * 0.05, // 20% of window height
     width: width * 0.8, // 80% of window width
     justifyContent: 'center',

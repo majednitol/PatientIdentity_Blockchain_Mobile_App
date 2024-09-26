@@ -35,10 +35,10 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
         console.log('doctorDataArray', doctorDataArray)
         // dispatch(fetchPatientDataFromDoctor(doctor));
         setDoctorDataArray(doctorDataArray.map(data => data.payload));
-        setIsDataLoaded(true);
+       
         
       }
-      
+      setIsDataLoaded(true);
     };
     fetchData();
   }, [loading, personalDoctor]);
@@ -46,10 +46,10 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
   const onRefresh = () => {
     setRefreshing(true);
     dispatch(getPersonalDoctor());
-    isDataLoaded(false)
+    setIsDataLoaded(false)
     setRefreshing(false);
   };
-
+console.log("doctorDataArray",doctorDataArray)
   return (
     <View style={styles.container}>
       <ScrollView
@@ -63,7 +63,7 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
 
           ) : (
             <>
-              {isDataLoaded&& doctorDataArray.length === 0 ? (
+              {isDataLoaded && doctorDataArray.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>No doctor data available</Text>

@@ -5,7 +5,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { downloadFile } from './Download';
 import Pinchable from 'react-native-pinchable';
 import FastImage from 'react-native-fast-image'
-import { ActivityIndicator, Button, IconButton, Text } from 'react-native-paper';
+import { ActivityIndicator, Button, Card, IconButton, Text } from 'react-native-paper';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { HealthContext } from '../../../../logic/context/health';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
@@ -41,7 +41,7 @@ const QRCodeGenerator = ({ url, onClose }) => {
 const DisplayFile = ({ userData, route }) => {
     const { ConnectedAccountUser, reducerValue, anotherUser, isDbVisiable, setIsDbVisiable, downloadProgress, setDownloadProgress, userAddress, setUserAddress } = useContext(HealthContext);
     const dispatch = useDispatch();
- 
+
     const { connectedUserType } = useSelector((state) => state.connectedUser);
 
     const { success, deleteLoader, error } = useSelector((state) => state.patient);
@@ -108,7 +108,7 @@ const DisplayFile = ({ userData, route }) => {
                 </View>
             ));
             setImages(imageComponents);
-          
+
         } catch (error) {
             console.log(error);
         }
@@ -168,8 +168,12 @@ const DisplayFile = ({ userData, route }) => {
                             <Button mode="text" style={{ paddingLeft: 5 }} disabled={curPage === Math.ceil(images.length / 9) - 1} onPress={goToNextPage}>Next</Button>
                         </View>
                     </>
-                ) :  images.length === 0 ? (
-                    <Text>No Prescription to display</Text>
+                ) : images.length === 0 ? (
+                    <Card style={{marginLeft:30}}>
+                        <Card.Content>
+                            <Text style={styles.title}>No Prescription is available</Text>
+                        </Card.Content>
+                    </Card>
                 ) : (
                     <ActivityIndicator
                         size={45}
@@ -283,6 +287,16 @@ const styles = StyleSheet.create({
         right: 10,
         zIndex: 2,
         padding: 10,
+
+    },
+    // card: {
+    //         marginBottom: 10,
+    //         elevation: 20,
+    //       },
+    title: {
+        fontSize: 22,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
 
     closeButtonText: {

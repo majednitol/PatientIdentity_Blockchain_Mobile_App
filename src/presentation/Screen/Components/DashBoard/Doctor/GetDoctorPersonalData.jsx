@@ -9,7 +9,8 @@ import { fetchDoctorData } from '../../../../../logic/redux/doctor/DoctorSlice';
 import SmartAccount from '../../../../../service/wallet connect/SmartAccount';
 import { ethers } from 'ethers';
 const GetDoctorPersonalData = () => {
-  
+  const {
+    generateUniqueId, btnclick, emailAddress } = useContext(HealthContext);
   const dispatch = useDispatch();
   const { doctorData, loading, error } = useSelector((state) => state.doctor);
   const fetchData = async() => {
@@ -40,7 +41,7 @@ const GetDoctorPersonalData = () => {
           <Card.Content>
             <Text style={styles.title}>Doctor Basic Information</Text>
           <CustomText label="Account " value={doctorData?.[0]} />
-          <CustomText label="EmailAddress" value={doctorData?.[16]} />
+          <CustomText label="EmailAddress" value={emailAddress} />
             <CustomText label="DoctorId " value={String(doctorData?.[1])} />
             <CustomText label="Doctor Name" value={name} />
             <CustomText label="Doctor BirthDay" value={birthDay} />

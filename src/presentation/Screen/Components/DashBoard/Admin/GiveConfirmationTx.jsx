@@ -128,7 +128,7 @@
 // export default GiveConfirmationTx;
 
 import React, { useState, useEffect, useContext } from 'react';
-import { View, StyleSheet, RefreshControl } from 'react-native';
+import { View, StyleSheet, RefreshControl, Alert } from 'react-native';
 import { ActivityIndicator, Button, Card, Text, useTheme } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
@@ -208,14 +208,8 @@ const AllUserCard = ({ userAddress }) => {
     const { pendingUserAllAddess, provideConfirmation, isConfirmed } = useSelector((state) => state.transactionConfirmation);
 
     const dispatch = useDispatch();
-    if (provideConfirmation.success) {
-        return Alert.alert('User Confirmed Successfully');
-
-    }
     useEffect(() => {
-        dispatch(isConfirmedbyAdmin({ userAddress })).then(() => {
-            return Alert.alert('User Confirmed Successfully');
-        })
+        dispatch(isConfirmedbyAdmin({ userAddress }))
         console.log(" Confirmed")
     }, [userAddress,dispatch,pendingUserAllAddess])
 
@@ -247,12 +241,16 @@ console.log("isConfirmed.data",isConfirmed.data)
                         {
                             isConfirmed.data === true ? <Button onPress={() => {
                                 const userAddress = userData.userAddress
-                                dispatch(giveConfirmation({ userAddress }))
+                                dispatch(giveConfirmation({ userAddress })).then(() => {
+                                    Alert.alert('User Confirmed Successfully');
+                                })
                             }} mode='contained' style={styles.button} disabled={true}>
                                 Already Confirmed
                             </Button> : <Button onPress={() => {
                                 const userAddress = userData.userAddress
-                                dispatch(giveConfirmation({ userAddress }))
+                                dispatch(giveConfirmation({ userAddress })).then(() => {
+                                    Alert.alert('User Confirmed Successfully');
+                                })
                             }} mode='contained' style={styles.button} >
                                 Confirm
                             </Button>

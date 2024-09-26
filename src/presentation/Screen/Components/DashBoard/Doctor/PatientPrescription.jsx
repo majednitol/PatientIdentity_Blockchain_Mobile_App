@@ -8,17 +8,18 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { getDoctorAnotherData } from '../../../../../logic/redux/doctor/DoctorSlice';
 
- import { fetchPatientData } from '../../../../../logic/redux/patient/PatientSlice';
+import { fetchPatientData } from '../../../../../logic/redux/patient/PatientSlice';
 import { useNavigation } from '@react-navigation/native';
+import { ethers } from 'ethers';
 
 const PatientPrescription = () => {
   const theme = useTheme();
   const dispatch = useDispatch();
-  const { doctorAnotherData,loading } = useSelector((state) => state.doctor);
+  const { doctorAnotherData, loading } = useSelector((state) => state.doctor);
   const [patientDataArray, setPatientDataArray] = useState([]);
-const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
+  const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   useEffect(() => {
     dispatch(getDoctorAnotherData());
   }, [dispatch]);
@@ -39,14 +40,15 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
           setPatientDataArray(patientDataArray.map(data => data.payload));
         }
       }
-      
+      setIsDataLoaded(true)
     };
     fetchData();
   }, [loading, doctorAnotherData]);
 
   const onRefresh = () => {
     setRefreshing(true);
-    
+    dispatch(getDoctorAnotherData());
+    setIsDataLoaded(false)
     setRefreshing(false);
   };
 
@@ -62,16 +64,16 @@ const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([])
             </View>
           ) : (
             <>
-              {patientDataArray.length > 0 ? (
-                patientDataArray.map((patientData, index) => (
-                  <PatientCard key={index} patientData={patientData} />
-                ))
-              ) : (
+              {isDataLoaded && patientDataArray.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
                     <Text style={styles.title}>No doctor data available</Text>
                   </Card.Content>
                 </Card>
+              ) : (
+                patientDataArray.map((patientData, index) => (
+                  <PatientCard key={index} patientData={patientData} />
+                ))
               )}
             </>
           )}
@@ -86,7 +88,7 @@ const PatientCard = ({ patientData }) => {
   const dispatch = useDispatch();
 
   const navigation = useNavigation();
-  
+
 
   const [patientDataFromDoctorArray, setPatientDataFromDoctorArray] = useState([]);
   const fetchData2 = async () => {
@@ -94,13 +96,13 @@ const PatientCard = ({ patientData }) => {
       const patientPrescription = patientData?.[8]
       if (typeof patientPrescription === 'string') {
         dataArray = patientPrescription.split(',').map(item => item.trim());
-      
+
         console.log('patientPrescription', dataArray)
-     
+
         navigation.navigate('DisplayFile', { imageUrls: dataArray });
-        
-          
-          
+
+
+
       }
     }
   };
@@ -108,16 +110,16 @@ const PatientCard = ({ patientData }) => {
   return (
     <TouchableOpacity onPress={async () => {
       await fetchData2();
-      
+
     }}>
       <Card style={styles.card}>
         <Card.Content>
           {patientData ? (
             <>
-            <CustomText label="Account" value={patientData[0]} />
+              <CustomText label="Account" value={patientData[0]} />
               <CustomText label="PatientId" value={String(patientData[1])} />
-              <CustomText label="Patient Name" value={patientData[2]} />
-              <CustomText label="Patient Gender" value={patientData[3]} />
+              <CustomText label="Patient Name" value={ethers.utils.parseBytes32String(patientData[2])} />
+              <CustomText label="Patient Gender" value={ethers.utils.parseBytes32String(patientData[3])} />
             </>
           ) : (
             <ActivityIndicator />

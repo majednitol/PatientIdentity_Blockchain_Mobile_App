@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Text, Surface, Button, useTheme } from 'react-native-paper';
-import { StyleSheet, View, ScrollView } from 'react-native';
+import { StyleSheet, View, ScrollView, RefreshControl } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSubscription, cancelSubscription, getSubscriptionStatus } from '../../../logic/redux/subscription/subscription';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +10,13 @@ function SubscriptionInfo() {
     const { subscriptionStatus } = useSelector((state) => state.subscription);
     const theme = useTheme();
     const navigation = useNavigation();
+    const [refreshing, setRefreshing] = useState(false);
+    const onRefresh = () => {
+        setRefreshing(true);
+        dispatch(getSubscriptionStatus());
+        setRefreshing(false);
+      };
+      console.log(subscriptionStatus?.data)
     useEffect(() => {
         dispatch(getSubscriptionStatus());
     }, [dispatch]);
@@ -17,21 +24,9 @@ function SubscriptionInfo() {
         navigation.navigate('Payment');
     }
     // Helper function to convert timestamp to days
-    const convertTimestampToDays = (timestamp) => {
-        console.log("timestamp", timestamp)// Current time in seconds
-        const currentTime = Math.floor(Date.now() / 1000);
-        if (timestamp < currentTime) {
-            // Convert to days
-            return timestamp = 'N/A'
-        }
-
-        const timeDifference = timestamp - currentTime; // Difference in seconds
-        const daysRemaining = Math.floor(timeDifference / (60 * 60 * 24));
-        return daysRemaining;
-    };
 
     return (
-        <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
             <Surface style={styles.surface}>
                 <Text style={styles.title}>Subscription Information</Text>
 
@@ -44,7 +39,7 @@ function SubscriptionInfo() {
 
                 <Card style={styles.card}>
                     <Card.Content>
-                        <Text style={styles.label}>Subscription Total Days:</Text>
+                        <Text style={styles.label}>Subscription Total Years:</Text>
                         <Text style={styles.value}>
                             {subscriptionStatus?.data?.[1] ? subscriptionStatus.data[1] + ' Years' : 'N/A'}
                         </Text>

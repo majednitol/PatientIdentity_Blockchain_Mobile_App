@@ -52,9 +52,9 @@ const PathologistFromDoctor = () => {
           setDoctorDataArray(doctorDataArray.map(data => data.payload));
 
         }
-        setIsDataLoaded(true);
+        
       }
-
+      setIsDataLoaded(true);
     };
     fetchData();
   }, [loading, pathologistData]);
@@ -145,8 +145,8 @@ const DoctorCard = ({ doctorData }) => {
                 alignItems: 'center',         // Centers buttons vertically
 
               }}>
-                <ProfilePicture userData={doctorData?.[8]} height={150} width={119} borderRadius={20} />
-                <View>
+                <ProfilePicture userData={doctorData?.[8]} height={130} width={100} borderRadius={20} />
+                <View style={{marginLeft:20}}>
                   <CustomText label="Account " value={doctorData[0]} />
                   <CustomText label="DoctorId " value={String(doctorData[1])} />
                   <CustomText label="Doctor Name" value={ethers.utils.parseBytes32String(doctorData[2])} />
