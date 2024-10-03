@@ -14,6 +14,7 @@ import { MedicalResearchLabModule } from './medical-research-lab/medical-researc
 import { PathologistModule } from './pathologist/pathologist.module';
 
 
+
 export const pubSub = new RedisPubSub({
   connection: {
     host: process.env.REDIS_HOST || 'localhost',
