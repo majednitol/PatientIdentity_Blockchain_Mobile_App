@@ -62,7 +62,7 @@ export const pubSub = new RedisPubSub({
     }),
 
     // Import the TodoModule for CRUD operations
-    TodoModule,
+     TodoModule,
 
     AdminModule,
 
