@@ -6,6 +6,12 @@ import { TodoModule } from './todo/todo.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
+import { AdminModule } from './admin/admin.module';
+import { PatientModule } from './patient/patient.module';
+import { DoctorModule } from './doctor/doctor.module';
+import { PharmacyCompanyModule } from './pharmacy-company/pharmacy-company.module';
+import { MedicalResearchLabModule } from './medical-research-lab/medical-research-lab.module';
+import { PathologistModule } from './pathologist/pathologist.module';
 
 
 export const pubSub = new RedisPubSub({
@@ -56,6 +62,18 @@ export const pubSub = new RedisPubSub({
 
     // Import the TodoModule for CRUD operations
     TodoModule,
+
+    AdminModule,
+
+    PatientModule,
+
+    DoctorModule,
+
+    PharmacyCompanyModule,
+
+    MedicalResearchLabModule,
+
+    PathologistModule,
   ],
   controllers: [],
   providers: [],
