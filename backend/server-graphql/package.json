@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@biconomy/account": "^4.1.1",
     "@graphql-tools/schema": "^10.0.6",
     "@keyv/redis": "^3.0.1",
     "@nestjs/apollo": "^12.2.0",
@@ -40,6 +41,7 @@
     "cacheable": "^1.7.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "ethers": "^5.7.2",
     "graphql": "^16.9.0",
     "graphql-redis-subscriptions": "^2.6.1",
     "graphql-tools": "^9.0.1",

@@ -1,5 +1,5 @@
 import {View} from 'react-native';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import {ActivityIndicator, Card, MD2Colors, Text, useTheme} from 'react-native-paper';
 import Animated, {FadeInDown, FadeInUp} from 'react-native-reanimated';
@@ -7,25 +7,40 @@ import { HealthContext } from '../../../../../logic/context/health';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPharmacyCompanyData } from '../../../../../logic/redux/pharmacy company/pharmacyCompanySlice';
 import { ethers } from 'ethers';
+import { retrieveFromStorage, saveToStorage } from '../../../../../../LocalStorage';
 
 const GetPharmacyCompanyPersonalData = () => {
   const theme = useTheme();
-  const {
-   isLoading,
-    getPharmacyCompanyAllData,
-    PharmacyCompanyData,emailAddress
-  } = useContext(HealthContext);
+  const { isLoading } = useContext(HealthContext);
   const dispatch = useDispatch();
-  const { pharmacyCompanyData,loading, error } = useSelector((state) => state.pharmacyCompany);
+  const { pharmacyCompanyData } = useSelector((state) => state.pharmacyCompany);
+  
+  const [userData, setUserData] = useState(null); 
+
   useEffect(() => {
-    // getPharmacyCompanyAllData();
-    dispatch(fetchPharmacyCompanyData())
-    console.log("pharmacyCompanyData",pharmacyCompanyData)
+    const fetchData = async () => {
+      const storedData = retrieveFromStorage('pharmacyCompanyData');
+      if (storedData) {
+        setUserData(storedData);
+        console.log("Retrieved from storage", storedData);
+      }
+      else if (pharmacyCompanyData?.length) {
+     
+        saveToStorage('pharmacyCompanyData', pharmacyCompanyData);
+        console.log("Data saved to storage", pharmacyCompanyData);
+        setUserData(pharmacyCompanyData); 
+      }
 
-  }, []);
+    };
 
+    fetchData();
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchPharmacyCompanyData());
+  }, [dispatch]);
   return (
-    <Animated.View
+    <Animated.View 
       style={{marginHorizontal: 12, marginVertical: 50}}
       entering={FadeInDown.springify()}
       exiting={FadeInUp.springify()}>
@@ -33,22 +48,20 @@ const GetPharmacyCompanyPersonalData = () => {
         <ActivityIndicator color={theme.colors.primary}/> 
       ) : (
           <Card>
-
           <Card.Content>
             <Text style={styles.title}>Pharmacy Company Information</Text>
-              <CustomText label="Account " value={pharmacyCompanyData?.[0]} />
-              {/* <CustomText label="EmailAddress" value={emailAddress} /> */}
-            <CustomText label="companyID " value={String(pharmacyCompanyData?.[1])} />
-            <CustomText label="Company Name" value={ethers.utils.parseBytes32String(pharmacyCompanyData?.[2])} />
-            <CustomText label="licenseID" value={String(pharmacyCompanyData?.[3])} />
-            <CustomText
-              label="product Information"
-              value={ethers.utils.parseBytes32String(pharmacyCompanyData?.[4])}
-            />
-            <CustomText
-              label="pharmacyRating"
-              value={String(pharmacyCompanyData?.[5])}
-            />
+            {userData ? (
+              <>
+                <CustomText label="Account " value={userData?.[0]} />
+                <CustomText label="companyID " value={userData?.[1]} />
+                <CustomText label="Company Name" value={ethers.utils.parseBytes32String(userData?.[2])} />
+                <CustomText label="licenseID" value={String(userData?.[3])} />
+                <CustomText label="product Information" value={ethers.utils.parseBytes32String(userData?.[4])} />
+                <CustomText label="pharmacyRating" value={userData?.[5]} />
+              </>
+            ) : (
+              <Text>No data available</Text>
+            )}
           </Card.Content>
         </Card>
       )}
@@ -74,9 +87,6 @@ const styles = {
   text: {
     marginBottom: 5,
   },
-  // label: {
-  //   fontWeight: "bold",
-  // },
   boldValue: {
     fontWeight: 'bold',
   },

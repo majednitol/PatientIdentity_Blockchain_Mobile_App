@@ -156,6 +156,7 @@ import PaymentScreen from './src/presentation/Screen/payment geteway/PaymentScre
 import { screensConfig } from './screens';
 
 
+
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -173,6 +174,7 @@ export default function App() {
             merchantIdentifier="merchant.com.yourapp">
 
             <HealthProvider>
+             
               <NavigationContainer
                 theme={scheme === 'dark' ? DarkTheme : DefaultTheme}>
  <Stack.Navigator
@@ -202,11 +204,11 @@ export default function App() {
                     name="SignUp"
                     component={PrimaryScreen}
                     options={{ headerShown: false }}
-                  />
+                  />  
                   <Stack.Screen
                     name="Dashboard"
                     component={Dashboard}
-                    options={{ headerShown: false }}
+                    options={{ headerShown: false }}  
                   />
 
                   {Object.entries(screensConfig).map(([screenName, component]) => (

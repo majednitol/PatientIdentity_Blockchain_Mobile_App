@@ -54,7 +54,8 @@ const GetPersonalDetails = () => {
                   <CustomText label="Account" value={patientData?.[0]} />
                   <CustomText label="EmailAddress" value={ethers.utils.parseBytes32String(patientData?.[12])} />
                   <CustomText label="PatientId" value={String(patientData?.[1])} />
-                  <CustomText label="Patient Name" value={ethers.utils.parseBytes32String(patientData?.[2])} />
+                    <CustomText label="Patient Name" value={ethers.utils.parseBytes32String(patientData?.[2])} />
+                    {console.log(patientData?.[1])}
                   <CustomText label="Patient Birthday" value={ethers.utils.parseBytes32String(patientData?.[11])} />
                     <CustomText label="Patient Gender" value={ethers
                       .utils.parseBytes32String(patientData?.[3])} />

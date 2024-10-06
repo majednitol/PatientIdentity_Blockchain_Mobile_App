@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useContext } from 'react';
 import { View, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
 import { ActivityIndicator, Card, Text, useTheme } from 'react-native-paper';
@@ -11,60 +10,85 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchAdminData } from '../../../../../logic/redux/admin/AdminSlice';
 import { ethers } from 'ethers';
 import ProfilePicture from '../../File/ProfilePicture';
+import { retrieveFromStorage, saveToStorage } from '../../../../../../LocalStorage'; // Adjust the path as necessary
+
+const STORAGE_KEY = 'AdminToPharmacyData';
 
 const PatientAllPrescription = () => {
   const theme = useTheme();
-  const {
-    reducerValue } = useContext(HealthContext);
+  const { reducerValue } = useContext(HealthContext);
   const dispatch = useDispatch();
   const { pharmacyCompanyData, AdminToPharmacy, loading, error } = useSelector((state) => state.pharmacyCompany);
   const [prescriptionSenderAdmin, setPrescriptionSenderAdmin] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
-  const onRefresh = () => {
-    setRefreshing(true);
 
-    dispatch(getAdminToPharmacyData())
-    setIsDataLoaded(false)
-    setRefreshing(false);
+  // Function to load data from local storage and fetch from API
+  const loadData = async () => {
+    try {
+      // Retrieve data from local storage
+      const storedData = retrieveFromStorage(STORAGE_KEY);
+      if (storedData) {
+        setPrescriptionSenderAdmin(storedData);
+        setIsDataLoaded(true);
+        console.log('Retrieved from storage', storedData);
+      } else {
+         dispatch(getAdminToPharmacyData());
+      }
+     
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
   };
+
   useEffect(() => {
-
-    dispatch(getAdminToPharmacyData())
-
-
-  }, [dispatch])
+    loadData();
+  }, [dispatch]);
 
   useEffect(() => {
     if (!AdminToPharmacy.loading && Array.isArray(AdminToPharmacy.data)) {
-      setPrescriptionSenderAdmin(AdminToPharmacy.data || []);
-      setIsDataLoaded(true)
+      // Save fetched data to local storage
+      saveToStorage(STORAGE_KEY, AdminToPharmacy.data);
+      console.log('Data saved to storage', AdminToPharmacy.data);
+      setPrescriptionSenderAdmin(AdminToPharmacy.data);
+      setIsDataLoaded(true);
     }
-  }, [AdminToPharmacy, AdminToPharmacy.loading]);
-  console.log('prescriptionSenderAdmin', prescriptionSenderAdmin)
+  }, [AdminToPharmacy]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      dispatch(getAdminToPharmacyData());
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Animated.View entering={FadeInDown.springify()} exiting={FadeInUp.springify()}>
-          {loading ? (
+          {AdminToPharmacy.loading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size={40} animating={true} color={theme.colors.blueA400} />
+              <ActivityIndicator size={40} animating={true} color={theme.colors.primary} />
             </View>
           ) : (
             <>
               {isDataLoaded && prescriptionSenderAdmin.length === 0 ? (
                 <Card style={{ marginTop: 20 }}>
                   <Card.Content>
-                    <Text style={styles.title}>Admin didnot send any prescription yet.</Text>
+                    <Text style={styles.title}>Admin did not send any prescription yet.</Text>
                   </Card.Content>
                 </Card>
-              ) :(
+              ) : (
                 prescriptionSenderAdmin.slice().reverse().map((admin, index) => (
                   <AdminCard key={index} admin={admin} />
                 ))
-              ) }
+              )}
             </>
           )}
         </Animated.View>
@@ -74,43 +98,55 @@ const PatientAllPrescription = () => {
 };
 
 const AdminCard = ({ admin }) => {
-  console.log("r", admin)
-
-  const [patientData, setPatientData] = useState(null);
+  const [userData, setUserData] = useState(null);
   const { adminData } = useSelector((state) => state.admin);
   const navigation = useNavigation();
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
-      const saAddress = admin
+      try {
+        const storedData = retrieveFromStorage("adminData");
+        if (storedData) {
+          setUserData(storedData) 
+          console.log('load from stored data', storedData)
+        } else {
+          const saAddress = admin;
+          dispatch(fetchAdminData(saAddress))
+        }
 
-      dispatch(fetchAdminData(saAddress));
+      } catch (error) {
+        console.error('Error fetching admin data:', error);
+      }
     };
-    fetchData()
+    fetchData();
+  }, [admin, dispatch]);
 
-  }, [admin]);
-  console.log("adminData", adminData.data[5])
+  useEffect(() => {
+    if (!adminData.loading && Array.isArray(adminData?.data)) {
+      setUserData(adminData.data);
+      saveToStorage("adminData", adminData.data);
+      console.log(`Saved admin data for ${admin} to storage:`, adminData.data);
+     
+    }
+  }, [adminData.data]);
   return (
-    <View >
-      <Card style={styles.card} onPress={() => {
-        navigation.navigate('DisplayFile', { imageUrls: adminData?.data?.[5] });
-      }}>
+    <View>
+      <Card
+        style={styles.card}
+        onPress={() => {
+          navigation.navigate('DisplayFile', { imageUrls: userData?.[5] });
+        }}
+      >
         <Card.Content>
-          {adminData.data ? (
+          {userData ? (
             <>
-              <View style={{
-                flexDirection: 'row',         // Aligns buttons in a row
-                justifyContent: 'space-between',     // Centers buttons horizontally
-                alignItems: 'center',         // Centers buttons vertically
-
-              }}>
-                <ProfilePicture userData={adminData.data?.[4]} height={130} width={100} borderRadius={20} />
-                <View style={{marginLeft:20}}>
-                  <CustomText label="Account" value={adminData?.data?.[0]} />
-                  <CustomText label="AdminId" value={String(adminData?.data?.[1])} />
-                  <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(adminData?.data?.[2])} />
-                  <CustomText label="Admin Gender" value={ethers
-                    .utils.parseBytes32String(adminData?.data?.[3])} />
+              <View style={styles.adminInfoContainer}>
+                <ProfilePicture userData={userData?.[4]} height={130} width={100} borderRadius={20} />
+                <View style={styles.adminTextContainer}>
+                  <CustomText label="Account" value={userData?.[0]} />
+                  <CustomText label="Admin ID" value={String(userData?.[1])} />
+                  <CustomText label="Admin Name" value={ethers.utils.parseBytes32String(userData?.[2])} />
+                  <CustomText label="Admin Gender" value={ethers.utils.parseBytes32String(userData?.[3])} />
                 </View>
               </View>
             </>
@@ -125,8 +161,7 @@ const AdminCard = ({ admin }) => {
 
 const CustomText = ({ label, value }) => (
   <Text style={styles.text}>
-    <Text style={styles.label}>{label}:</Text>{' '}
-    <Text style={styles.boldValue} selectable={true}>{value}</Text>
+    <Text style={styles.label}>{label}:</Text> <Text style={styles.boldValue} selectable={true}>{value}</Text>
   </Text>
 );
 
@@ -159,6 +194,15 @@ const styles = StyleSheet.create({
   },
   boldValue: {
     fontWeight: 'bold',
+  },
+  adminInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  adminTextContainer: {
+    marginLeft: 20,
+    flex: 1,
   },
 });
 
